@@ -5,8 +5,10 @@
     "inertiajs",
     "japa",
     "luxon",
+    "ossp",
     "pino",
     "typecheck",
+    "uids",
     "vinejs",
     "yujin"
   ]
