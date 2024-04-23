@@ -7,7 +7,7 @@ import '../css/app.css'
 const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
 
 createInertiaApp({
-  progress: { color: '#5468FF' },
+  progress: { color: '#5468FF', showSpinner: false },
 
   title: (title) => `${title} - ${appName}`,
 
