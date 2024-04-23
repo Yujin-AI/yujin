@@ -9,11 +9,30 @@
 
   @viteReactRefresh()
   @inertiaHead()
-  @vite(['inertia/app/app.tsx', `inertia/pages/${page.component}.tsx`])
+  @vite(['inertia/app/app.tsx','inertia/css/app.css', `inertia/pages/${page.component}.tsx`])
 </head>
 
-<body>
+<body class="">
   @inertia()
+  <script>
+    const toggleTheme = (theme) => {
+      const body = document.querySelector('body');
+      body.classList.remove('light', 'dark');
+      body.classList.add(theme);
+      localStorage.setItem('theme', theme === 'system' ? 'system' : '');
+    }
+    const savedTheme = localStorage.getItem('theme');
+
+    const setTheme = () => {
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const theme = savedTheme === 'system' ? systemTheme : (savedTheme || systemTheme);
+      toggleTheme(theme);
+    };
+
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setTheme);
+    setTheme();
+  </script>
 </body>
 
 </html>

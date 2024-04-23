@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['class'],
-  content: ['./inertia/**/*.{js,ts,jsx,tsx}'],
+  content: ['./inertia/**/*.{js,ts,jsx,tsx}', './resources/**/*.{js,ts,jsx,tsx,edge}'],
   prefix: '',
   theme: {
     container: {

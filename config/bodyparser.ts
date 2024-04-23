@@ -2,7 +2,7 @@ import { defineConfig } from '@adonisjs/core/bodyparser'
 
 const bodyParserConfig = defineConfig({
   /**
-   * The bodyparser middleware will parse the request body
+   * The body-parser middleware will parse the request body
    * for the following HTTP methods.
    */
   allowedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'],

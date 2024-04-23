@@ -77,7 +77,7 @@ export default defineConfig({
 
   /*
   |--------------------------------------------------------------------------
-  | Metafiles
+  | Meta-files
   |--------------------------------------------------------------------------
   |
   | A collection of files you want to copy to the build folder when creating
