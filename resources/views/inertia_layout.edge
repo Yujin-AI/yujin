@@ -16,22 +16,23 @@
   @inertia()
   <script>
     const toggleTheme = (theme) => {
-      const body = document.querySelector('body');
-      body.classList.remove('light', 'dark');
-      body.classList.add(theme);
-      localStorage.setItem('theme', theme === 'system' ? 'system' : '');
+      localStorage.setItem('theme', theme);
+
+      document.body.classList.remove('light', 'dark', 'system')
+      if (theme === 'system') {
+        document.body.classList.add(
+          window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        )
+      } else {
+        document.body.classList.add(theme)
+      }
+
+      localStorage.setItem('theme', theme);
     }
     const savedTheme = localStorage.getItem('theme');
 
-    const setTheme = () => {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      const theme = savedTheme === 'system' ? systemTheme : (savedTheme || systemTheme);
-      toggleTheme(theme);
-    };
-
-
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setTheme);
-    setTheme();
+    toggleTheme(savedTheme || 'system');
   </script>
 </body>
 
