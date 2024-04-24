@@ -18,7 +18,7 @@ export default class AuthController {
 
       if (nextPath) return response.redirect().toPath(nextPath)
 
-      return response.redirect().toRoute('/')
+      return response.redirect().toRoute('/dashboard')
     } catch (error) {
       session.flash('errors.email', 'Invalid email or password')
       let backPath = '/login'

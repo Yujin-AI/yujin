@@ -8,6 +8,8 @@
 */
 
 import AuthController from '#controllers/auth_controller'
+import ChatbotController from '#controllers/chatbot_controller'
+import DashboardController from '#controllers/dashboard_controller'
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 router.on('/').renderInertia('home', { version: 6 })
@@ -33,3 +35,24 @@ router
   })
   .prefix('auth')
   .use(middleware.guest())
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard routes
+|--------------------------------------------------------------------------
+*/
+router.get('dashboard', [DashboardController, 'dashboard']).as('dashboard').use(middleware.auth())
+
+router
+  .get(':chatbotSlug/dashboard', [DashboardController, 'showDashboard'])
+  .as('dashboard.show')
+  .use(middleware.auth())
+
+/*
+|--------------------------------------------------------------------------
+| Chatbot routes
+|--------------------------------------------------------------------------
+*/
+router.get('chatbots', [ChatbotController, 'index']).as('chatbots.index').use(middleware.auth())
+router.post('chatbots', [ChatbotController, 'store']).use(middleware.auth())
+router.put('chatbots/select', [ChatbotController, 'selectChatbot']).use(middleware.auth())

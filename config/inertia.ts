@@ -19,6 +19,6 @@ export default defineConfig({
   ssr: {
     enabled: true,
     entrypoint: 'inertia/app/ssr.tsx',
-    pages: ['home', 'auth/login', 'auth/signup'],
+    pages: ['auth/login', 'auth/signup'],
   },
 })
