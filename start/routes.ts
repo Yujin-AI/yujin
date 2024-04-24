@@ -7,11 +7,15 @@
 |
 */
 
+import router from '@adonisjs/core/services/router'
+
+import ArticlesController from '#controllers/articles_controller'
 import AuthController from '#controllers/auth_controller'
 import ChatbotController from '#controllers/chatbot_controller'
 import DashboardController from '#controllers/dashboard_controller'
-import router from '@adonisjs/core/services/router'
+
 import { middleware } from './kernel.js'
+
 router.on('/').renderInertia('home', { version: 6 })
 
 /*
@@ -56,3 +60,13 @@ router
 router.get('chatbots', [ChatbotController, 'index']).as('chatbots.index').use(middleware.auth())
 router.post('chatbots', [ChatbotController, 'store']).use(middleware.auth())
 router.put('chatbots/select', [ChatbotController, 'selectChatbot']).use(middleware.auth())
+
+/*
+|--------------------------------------------------------------------------
+| Article routes
+|--------------------------------------------------------------------------
+*/
+router
+  .get(':chatbotSlug/articles', [ArticlesController, 'index'])
+  .as('articles.index')
+  .use(middleware.auth())

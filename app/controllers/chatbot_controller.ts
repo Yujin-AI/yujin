@@ -1,7 +1,10 @@
+import { HttpContext } from '@adonisjs/core/http'
+import queue from '@rlanz/bull-queue/services/main'
+
+import SpiderJob from '#jobs/spider_job'
 import Chatbot from '#models/chatbot'
 import User from '#models/user'
 import { createChatbotValidator } from '#validators/chatbot_validator'
-import { HttpContext } from '@adonisjs/core/http'
 
 export default class ChatbotController {
   public async index({ inertia, auth }: HttpContext) {
@@ -23,6 +26,8 @@ export default class ChatbotController {
       creatorId: auth.user?.id,
     })
     await chatbot.save()
+
+    queue.dispatch(SpiderJob, { chatbotId: chatbot.id, url: payload.url })
 
     return response.redirect('/dashboard')
   }

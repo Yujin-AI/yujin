@@ -1,8 +1,10 @@
 import string from '@adonisjs/core/helpers/string'
-import { BaseModel, beforeCreate, column, hasOne } from '@adonisjs/lucid/orm'
-import type { HasOne } from '@adonisjs/lucid/types/relations'
+import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
+
+import { BaseModel, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
+import Article from './article.js'
 import User from './user.js'
 
 export default class Chatbot extends BaseModel {
@@ -32,6 +34,7 @@ export default class Chatbot extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
+  //todo)) when slugify package is migrated to v6 use it
   @beforeCreate()
   static async assignIdAndSlug(chatbot: Chatbot) {
     chatbot.id = chatbot.id || uuid()
@@ -78,4 +81,7 @@ export default class Chatbot extends BaseModel {
     foreignKey: 'id',
   })
   declare owner: HasOne<typeof User>
+
+  @hasMany(() => Article)
+  declare articles: HasMany<typeof Article>
 }
