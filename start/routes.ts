@@ -67,6 +67,6 @@ router.put('chatbots/select', [ChatbotController, 'selectChatbot']).use(middlewa
 |--------------------------------------------------------------------------
 */
 router
-  .get(':chatbotSlug/articles', [ArticlesController, 'index'])
+  .get(':chatbotSlug/articles', [ArticlesController, 'showArticles'])
   .as('articles.index')
   .use(middleware.auth())
