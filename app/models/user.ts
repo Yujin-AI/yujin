@@ -69,10 +69,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare defaultChatbot: BelongsTo<typeof Chatbot>
 
   async validateChatbotOwnership(chatbotId: string) {
-    const chatbot = await Chatbot.query().where('id', chatbotId).orWhere('slug', chatbotId).first()
+    const chatbot = await Chatbot.query().where('slug', chatbotId).first()
     if (!chatbot) return false
 
-    return chatbot.ownerId === this.id
+    return chatbot.ownerId === this.id ? chatbot : false
   }
 
   static authTokens = DbAccessTokensProvider.forModel(User)

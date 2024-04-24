@@ -1,10 +1,11 @@
+import { InferPageProps } from '@adonisjs/inertia/types'
+import { Link } from '@inertiajs/react'
+
 import ChatbotController from '#controllers/chatbot_controller'
 import CreateChatbotDialog from '@/components/create_chatbot'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { InferPageProps } from '@adonisjs/inertia/types'
-import { Link } from '@inertiajs/react'
 
 export default function ChatbotsIndex(props: InferPageProps<ChatbotController, 'index'>) {
   const { chatbots, defaultChatbotId } = props

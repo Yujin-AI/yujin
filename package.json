@@ -9,6 +9,7 @@
     "build": "node ace build",
     "dev": "node ace serve --watch",
     "predev": "docker compose -f docker/dev/docker-compose.yml up -d",
+    "jobs": "node ace queue:listen",
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
