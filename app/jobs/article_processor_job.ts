@@ -1,6 +1,11 @@
+import { Job } from '@rlanz/bull-queue'
+import { CheerioCrawler } from 'crawlee'
+
+import { WebScrapeSystemPrompt } from '#lib/constants'
 import { ArticleCrawlStatus } from '#lib/enums'
 import Article from '#models/article'
-import { Job } from '@rlanz/bull-queue'
+import OpenAIService from '#services/open_ai_service'
+import env from '#start/env'
 
 interface ArticleProcessorJobPayload {
   url: string
@@ -19,7 +24,7 @@ export default class ArticleProcessorJob extends Job {
   async handle(payload: ArticleProcessorJobPayload) {
     try {
       const { url, chatbotId } = payload
-      if (url.includes('.json')) {
+      if (url.endsWith('.json')) {
         const response = await fetch(url)
         const { product } = (await response.json()) as unknown as any //todo)) add proper typing
         const { title, ...info } = product
@@ -33,7 +38,62 @@ export default class ArticleProcessorJob extends Job {
           chatbotId,
           crawlStatus: ArticleCrawlStatus.SUCCESS,
         })
+        // todo)) emit event
+        return
       }
+      // run normal crawler for html
+
+      const crawler = new CheerioCrawler({
+        // Use the requestHandler to process each of the crawled pages.
+        async requestHandler({ $, request }) {
+          const title = $('title').text() || 'Untitled'
+          console.log('Scrapping: ', JSON.stringify({ url: request.url, title }))
+
+          $('body').find('style').remove()
+          $('body').find('script').remove()
+          $('body').find('nav').remove()
+          $('body').find('footer').remove()
+          $('body').find('.footer').remove()
+          $('body').find('#footer').remove()
+          $('body').find('iframe').remove()
+          $('body').find('noscript').remove()
+          $('body').find('header').remove()
+          $('body').find('img').remove()
+          $('body').find('img').remove()
+          $('body').find('svg').remove()
+
+          const aiService = new OpenAIService(env.get('AI_API_KEY'))
+
+          const ans = await aiService.ask([
+            {
+              role: 'system',
+              content: WebScrapeSystemPrompt,
+            },
+            {
+              role: 'user',
+              content: JSON.stringify({
+                title,
+                content: $('body').text(),
+              }),
+            },
+          ])
+          if (!ans) {
+            console.log('No answer from AI')
+            return
+          }
+
+          await Article.create({
+            title,
+            content: ans,
+            sourceUrl: request.url,
+            chatbotId,
+            crawlStatus: ArticleCrawlStatus.SUCCESS,
+          })
+        },
+      })
+
+      // Add first URL to the queue and start the crawl.
+      await crawler.run([url])
     } catch (error) {
       console.error(error)
     }

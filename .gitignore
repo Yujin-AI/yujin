@@ -18,3 +18,6 @@ yarn-error.log
 
 # Platform specific
 .DS_Store
+
+# Crawlee storage
+storage

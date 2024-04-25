@@ -1,14 +1,17 @@
-import ArticlesController from '#controllers/articles_controller'
-import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link } from '@inertiajs/react'
+
+import ArticlesController from '#controllers/articles_controller'
+import { removeTrailingSlash } from '#lib/utils'
+
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export default function ArticlesIndex(props: InferPageProps<ArticlesController, 'showArticles'>) {
   console.log('props', props)
   const { previousPageUrl, nextPageUrl, firstPage, lastPage, currentPage } = props.articles.meta
   let currentURL = new URL(window.location.href).pathname
-  currentURL = currentURL.endsWith('/') ? currentURL.slice(0, -1) : currentURL
+  currentURL = removeTrailingSlash(currentURL)
 
   return (
     <div>

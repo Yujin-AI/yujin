@@ -1,8 +1,10 @@
 import { Job } from '@rlanz/bull-queue'
 import queue from '@rlanz/bull-queue/services/main'
+import { CheerioCrawler } from 'crawlee'
 
 import { ShopifyStoreJSON } from '#lib/types'
 import { SpiderJobValidator } from '#validators/spider_job_validator'
+
 import ArticleProcessorJob from './article_processor_job.js'
 
 interface SpiderJobPayload {
@@ -17,31 +19,43 @@ export default class SpiderJob extends Job {
   }
 
   private async isShopify(url: string) {
-    let response = await fetch(url + '/products.json?limit=1000')
-    if (response.status === 200) return true
-
-    return false
+    const shopifyURL = url + '/products.json?limit=1000'
+    let response = await fetch(shopifyURL)
+    return response.status === 200
   }
 
   private async crawl({ url, chatbotId }: SpiderJobPayload) {
-    console.log(`Crawling ${url}`)
     const isShopify = await this.isShopify(url)
+
     if (isShopify) {
+      console.log('Shopify store detected')
       const response = await fetch(url + '/products.json?limit=1000')
       const products = (await response.json()) as unknown as ShopifyStoreJSON
       products.products.forEach((product) => {
         const productURL = `${url}/products/${product.handle}.json`
         queue.dispatch(ArticleProcessorJob, { url: productURL, chatbotId })
       })
-      // queue.dispatch(ArticleProcessorJob, )
+      return
     }
+
+    const crawler = new CheerioCrawler({
+      async requestHandler({ request, enqueueLinks, contentType }) {
+        await enqueueLinks({ baseUrl: url })
+        if (contentType.type.includes('html')) {
+          console.log('sent to ArticleProcessorJob')
+          queue.dispatch(ArticleProcessorJob, { url: request.url, chatbotId })
+        }
+      },
+    })
+
+    await crawler.run([url])
   }
 
   /**
    * Base Entry point
    */
   async handle(payload: SpiderJobPayload) {
-    console.log('SpiderJob.handle', payload)
+    console.log('Spider Job with payload: ', payload)
     try {
       const data = await SpiderJobValidator.validate(payload)
       await this.crawl(data)
