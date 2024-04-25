@@ -19,15 +19,16 @@ export default class SpiderJob extends Job {
   }
 
   private async isShopify(url: string) {
-    let response = await fetch(url + '/products.json?limit=1000')
-    if (response.status === 200) return true
-
-    return false
+    const shopifyURL = url + '/products.json?limit=1000'
+    let response = await fetch(shopifyURL)
+    return response.status === 200
   }
 
   private async crawl({ url, chatbotId }: SpiderJobPayload) {
     const isShopify = await this.isShopify(url)
+
     if (isShopify) {
+      console.log('Shopify store detected')
       const response = await fetch(url + '/products.json?limit=1000')
       const products = (await response.json()) as unknown as ShopifyStoreJSON
       products.products.forEach((product) => {

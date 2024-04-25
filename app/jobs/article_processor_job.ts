@@ -1,8 +1,11 @@
 import { Job } from '@rlanz/bull-queue'
-import { PlaywrightCrawler } from 'crawlee'
+import { CheerioCrawler } from 'crawlee'
 
+import { WebScrapeSystemPrompt } from '#lib/constants'
 import { ArticleCrawlStatus } from '#lib/enums'
 import Article from '#models/article'
+import OpenAIService from '#services/open_ai_service'
+import env from '#start/env'
 
 interface ArticleProcessorJobPayload {
   url: string
@@ -40,16 +43,48 @@ export default class ArticleProcessorJob extends Job {
       }
       // run normal crawler for html
 
-      const crawler = new PlaywrightCrawler({
+      const crawler = new CheerioCrawler({
         // Use the requestHandler to process each of the crawled pages.
-        async requestHandler({ page, request }) {
-          const title = await page.title()
+        async requestHandler({ $, request }) {
+          const title = $('title').text() || 'Untitled'
           console.log('Scrapping: ', JSON.stringify({ url: request.url, title }))
 
-          const content = await page.content()
+          $('body').find('style').remove()
+          $('body').find('script').remove()
+          $('body').find('nav').remove()
+          $('body').find('footer').remove()
+          $('body').find('.footer').remove()
+          $('body').find('#footer').remove()
+          $('body').find('iframe').remove()
+          $('body').find('noscript').remove()
+          $('body').find('header').remove()
+          $('body').find('img').remove()
+          $('body').find('img').remove()
+          $('body').find('svg').remove()
+
+          const aiService = new OpenAIService(env.get('AI_API_KEY'))
+
+          const ans = await aiService.ask([
+            {
+              role: 'system',
+              content: WebScrapeSystemPrompt,
+            },
+            {
+              role: 'user',
+              content: JSON.stringify({
+                title,
+                content: $('body').text(),
+              }),
+            },
+          ])
+          if (!ans) {
+            console.log('No answer from AI')
+            return
+          }
+
           await Article.create({
             title,
-            content,
+            content: ans,
             sourceUrl: request.url,
             chatbotId,
             crawlStatus: ArticleCrawlStatus.SUCCESS,
