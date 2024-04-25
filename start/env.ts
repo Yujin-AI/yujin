@@ -43,5 +43,15 @@ export default await Env.create(new URL('../', import.meta.url), {
   */
   QUEUE_REDIS_HOST: Env.schema.string({ format: 'host' }),
   QUEUE_REDIS_PORT: Env.schema.number(),
-  QUEUE_REDIS_PASSWORD: Env.schema.string.optional()
+  QUEUE_REDIS_PASSWORD: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Constants
+  |----------------------------------------------------------
+  */
+  MAX_CRAWLING_CONCURRENCY: Env.schema.number(),
+  MAX_CRAWLING_DEPS: Env.schema.number(),
+  CRAWLING_INTERVAL: Env.schema.number(),
+  CRAWLER_TIME_LIMIT: Env.schema.number(),
 })

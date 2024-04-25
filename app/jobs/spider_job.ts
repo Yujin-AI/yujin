@@ -1,8 +1,10 @@
 import { Job } from '@rlanz/bull-queue'
 import queue from '@rlanz/bull-queue/services/main'
+import { CheerioCrawler } from 'crawlee'
 
 import { ShopifyStoreJSON } from '#lib/types'
 import { SpiderJobValidator } from '#validators/spider_job_validator'
+
 import ArticleProcessorJob from './article_processor_job.js'
 
 interface SpiderJobPayload {
@@ -24,7 +26,6 @@ export default class SpiderJob extends Job {
   }
 
   private async crawl({ url, chatbotId }: SpiderJobPayload) {
-    console.log(`Crawling ${url}`)
     const isShopify = await this.isShopify(url)
     if (isShopify) {
       const response = await fetch(url + '/products.json?limit=1000')
@@ -33,15 +34,27 @@ export default class SpiderJob extends Job {
         const productURL = `${url}/products/${product.handle}.json`
         queue.dispatch(ArticleProcessorJob, { url: productURL, chatbotId })
       })
-      // queue.dispatch(ArticleProcessorJob, )
+      return
     }
+
+    const crawler = new CheerioCrawler({
+      async requestHandler({ request, enqueueLinks, contentType }) {
+        await enqueueLinks({ baseUrl: url })
+        if (contentType.type.includes('html')) {
+          console.log('sent to ArticleProcessorJob')
+          queue.dispatch(ArticleProcessorJob, { url: request.url, chatbotId })
+        }
+      },
+    })
+
+    await crawler.run([url])
   }
 
   /**
    * Base Entry point
    */
   async handle(payload: SpiderJobPayload) {
-    console.log('SpiderJob.handle', payload)
+    console.log('Spider Job with payload: ', payload)
     try {
       const data = await SpiderJobValidator.validate(payload)
       await this.crawl(data)
