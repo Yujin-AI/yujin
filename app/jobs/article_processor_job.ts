@@ -1,7 +1,7 @@
 import { Job } from '@rlanz/bull-queue'
 import { CheerioCrawler } from 'crawlee'
 
-import { WebScrapeSystemPrompt } from '#lib/constants'
+import { ShopifyScrapePrompt, WebScrapeSystemPrompt } from '#lib/constants'
 import { ArticleCrawlStatus } from '#lib/enums'
 import { removeQueryParams, removeTrailingSlash } from '#lib/utils'
 import Article from '#models/article'
@@ -14,6 +14,11 @@ interface ArticleProcessorJobPayload {
 }
 
 export default class ArticleProcessorJob extends Job {
+  private aiService: OpenAIService
+  constructor() {
+    super()
+    this.aiService = new OpenAIService(env.get('AI_API_KEY'))
+  }
   // This is the path to the file that is used to create the job
   static get $$filepath() {
     return import.meta.url
@@ -27,14 +32,45 @@ export default class ArticleProcessorJob extends Job {
       const { url, chatbotId } = payload
       if (url.endsWith('.json')) {
         const response = await fetch(url)
-        const { product } = (await response.json()) as unknown as any //todo)) add proper typing
-        const { title, ...info } = product
 
         const productURL = url.split('.json')[0]
 
+        const existingArticle = await Article.query()
+          .where('sourceUrl', productURL)
+          .andWhere('chatbotId', chatbotId)
+          .andWhere('crawlStatus', ArticleCrawlStatus.SUCCESS)
+          .first()
+
+        if (existingArticle) {
+          console.log(
+            'Article already exists for  ',
+            JSON.stringify({ url: productURL, chatbotId }, null, 2)
+          )
+          return
+        }
+
+        const { product } = (await response.json()) as unknown as any //todo)) add proper typing
+        const { title, ...info } = product
+
+        console.log('Scrapping: ', JSON.stringify({ url: productURL, title }))
+
+        const ans = await this.aiService.ask([
+          {
+            role: 'system',
+            content: ShopifyScrapePrompt.replace('{{title}}', title).replace('{{url}}', productURL),
+          },
+          {
+            role: 'user',
+            content: JSON.stringify({
+              title,
+              content: info,
+            }),
+          },
+        ])
+
         await Article.create({
           title,
-          content: info,
+          content: ans,
           sourceUrl: productURL,
           chatbotId,
           crawlStatus: ArticleCrawlStatus.SUCCESS,

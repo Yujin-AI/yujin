@@ -15,8 +15,20 @@ export default class ArticlesController {
       .orderBy('createdAt', 'desc')
       .paginate(page || 1, 10)
 
-    console.log('articles', articles)
-
     return inertia.render('articles/index', { articles: articles, chatbot })
+  }
+
+  public async showArticle({ inertia, params, auth, response }: HttpContext) {
+    const chatbot = await auth.user?.validateChatbotOwnership(params.chatbotSlug)
+    if (!chatbot) {
+      return response.redirect('/dashboard')
+    }
+
+    const article = await Article.query()
+      .where('chatbotId', chatbot.id)
+      .andWhere('slug', params.articleSlug)
+      .first()
+
+    return inertia.render('articles/show', { article, chatbot })
   }
 }

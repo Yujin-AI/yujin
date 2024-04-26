@@ -11,15 +11,23 @@ export default function ArticlesIndex(props: InferPageProps<ArticlesController, 
   const { previousPageUrl, nextPageUrl, firstPage, lastPage, currentPage } = props.articles.meta
   let currentURL = new URL(window.location.href).pathname
   currentURL = removeTrailingSlash(currentURL)
-
+  console.log('currentURL', currentURL)
   return (
     <div>
       <h1>Articles</h1>
-      <ul>
+      <div className="flex flex-col">
         {props.articles.data.map((article) => (
-          <li key={article.id}>{article.title}</li>
+          <Link
+            key={article.id}
+            as="a"
+            // ':chatbotSlug/articles/:articleSlug'
+            href={currentURL + '/' + article.slug}
+            className="text-blue-500 cursor-pointer hover:underline"
+          >
+            {article.title}
+          </Link>
         ))}
-      </ul>
+      </div>
       <Link
         href={previousPageUrl ? currentURL + previousPageUrl : ''}
         disabled={!previousPageUrl}
