@@ -33,7 +33,11 @@ export default class SpiderJob extends Job {
       const products = (await response.json()) as unknown as ShopifyStoreJSON
       products.products.forEach((product) => {
         const productURL = `${url}/products/${product.handle}.json`
-        queue.dispatch(ArticleProcessorJob, { url: productURL, chatbotId })
+        queue.dispatch(
+          ArticleProcessorJob,
+          { url: productURL, chatbotId },
+          { queueName: 'article-processor' }
+        )
       })
       return
     }
@@ -43,7 +47,11 @@ export default class SpiderJob extends Job {
         await enqueueLinks({ baseUrl: url })
         if (contentType.type.includes('html')) {
           console.log('sent to ArticleProcessorJob')
-          queue.dispatch(ArticleProcessorJob, { url: request.url, chatbotId })
+          queue.dispatch(
+            ArticleProcessorJob,
+            { url: request.url, chatbotId },
+            { queueName: 'article-processor' }
+          )
         }
       },
     })
