@@ -1,5 +1,8 @@
-import { encoding_for_model } from '@dqbd/tiktoken'
 import OpenAI from 'openai'
+import { ChatCompletion, ChatCompletionChunk } from 'openai/resources/chat/completions'
+import { Stream } from 'openai/streaming'
+
+import { getToken } from '#lib/utils'
 
 export default class OpenAIService {
   private readonly openai: OpenAI
@@ -7,17 +10,20 @@ export default class OpenAIService {
     this.openai = new OpenAI({ apiKey: this.apiKey })
   }
 
-  public async ask(context: OpenAI.Chat.Completions.ChatCompletionMessageParam[]) {
-    const enc = encoding_for_model('gpt-3.5-turbo')
-    const token = enc.encode(JSON.stringify(context)).length
+  async ask(context: OpenAI.Chat.Completions.ChatCompletionMessageParam[]): Promise<ChatCompletion>
+  async ask(
+    context: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+    stream = true
+  ): Promise<Stream<ChatCompletionChunk>> {
+    const token = getToken(JSON.stringify(context)).length
     console.log('token:', token)
     if (token > 16000) return
+
     const response = await this.openai.chat.completions.create({
       messages: context,
-      model: 'gpt-3.5-turbo',
-      temperature: 0.5,
+      model: 'gpt-4-1106-preview',
+      temperature: 0,
+      stream: stream ?? false,
     })
-
-    return response.choices[0].message.content
   }
 }

@@ -27,7 +27,7 @@ export default class ChatbotController {
     })
     await chatbot.save()
 
-    queue.dispatch(SpiderJob, { chatbotId: chatbot.id, url: payload.url })
+    queue.dispatch(SpiderJob, { chatbotId: chatbot.id, url: payload.url }, { queueName: 'spider' })
 
     return response.redirect('/dashboard')
   }

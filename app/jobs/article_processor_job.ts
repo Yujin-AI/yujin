@@ -3,6 +3,7 @@ import { CheerioCrawler } from 'crawlee'
 
 import { WebScrapeSystemPrompt } from '#lib/constants'
 import { ArticleCrawlStatus } from '#lib/enums'
+import { removeQueryParams, removeTrailingSlash } from '#lib/utils'
 import Article from '#models/article'
 import OpenAIService from '#services/open_ai_service'
 import env from '#start/env'
@@ -45,9 +46,24 @@ export default class ArticleProcessorJob extends Job {
 
       const crawler = new CheerioCrawler({
         // Use the requestHandler to process each of the crawled pages.
+
         async requestHandler({ $, request }) {
+          const formattedURL = removeQueryParams(removeTrailingSlash(request.url))
+          const existingArticle = await Article.query()
+            .where('sourceUrl', formattedURL)
+            .andWhere('chatbotId', chatbotId)
+            .andWhere('crawlStatus', ArticleCrawlStatus.SUCCESS)
+            .first()
+
+          if (existingArticle) {
+            console.log(
+              'Article already exists for  ',
+              JSON.stringify({ url: formattedURL, chatbotId }, null, 2)
+            )
+            return
+          }
           const title = $('title').text() || 'Untitled'
-          console.log('Scrapping: ', JSON.stringify({ url: request.url, title }))
+          console.log('Scrapping: ', JSON.stringify({ url: formattedURL, title }))
 
           $('body').find('style').remove()
           $('body').find('script').remove()
@@ -82,13 +98,19 @@ export default class ArticleProcessorJob extends Job {
             return
           }
 
-          await Article.create({
-            title,
-            content: ans,
-            sourceUrl: request.url,
-            chatbotId,
-            crawlStatus: ArticleCrawlStatus.SUCCESS,
-          })
+          await Article.firstOrCreate(
+            {
+              sourceUrl: formattedURL,
+              chatbotId,
+            },
+            {
+              crawlStatus: ArticleCrawlStatus.SUCCESS,
+              content: ans,
+              title,
+            }
+          )
+
+          // todo)) add embedding and create vector database
         },
       })
 
