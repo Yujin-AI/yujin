@@ -57,10 +57,14 @@ router
 | Chatbot routes
 |--------------------------------------------------------------------------
 */
-router.get('chatbots', [ChatbotController, 'index']).as('chatbots.index').use(middleware.auth())
-router.post('chatbots', [ChatbotController, 'store']).use(middleware.auth())
-router.put('chatbots/select', [ChatbotController, 'selectChatbot']).use(middleware.auth())
-
+router
+  .group(() => {
+    router.get('chatbots', [ChatbotController, 'index']).as('chatbots.index')
+    router.post('chatbots', [ChatbotController, 'store'])
+    router.put('chatbots/select', [ChatbotController, 'selectChatbot'])
+    router.delete('chatbots/:chatbotSlug', [ChatbotController, 'delete'])
+  })
+  .use(middleware.auth())
 /*
 |--------------------------------------------------------------------------
 | Article routes

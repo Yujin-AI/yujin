@@ -38,6 +38,16 @@ services:
     volumes:
       - redis:/data
 
+  typesense:
+    container_name: typesense
+    image: typesense/typesense:26.0
+    restart: on-failure
+    ports:
+      - '8108:8108'
+    volumes:
+      - typesense:/data
+    command: '--data-dir /data --api-key=xyz --enable-cors'
+
 networks:
   postgres:
     driver: bridge
@@ -46,3 +56,4 @@ volumes:
   postgres:
   pgadmin:
   redis:
+  typesense:
