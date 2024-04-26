@@ -15,6 +15,8 @@ export default class ArticlesController {
       .orderBy('createdAt', 'desc')
       .paginate(page || 1, 10)
 
+    console.log('articles', articles)
+
     return inertia.render('articles/index', { articles: articles, chatbot })
   }
 }

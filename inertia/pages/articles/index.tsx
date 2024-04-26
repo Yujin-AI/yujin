@@ -2,10 +2,9 @@ import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link } from '@inertiajs/react'
 
 import ArticlesController from '#controllers/articles_controller'
-import { removeTrailingSlash } from '#lib/utils'
 
 import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn, removeTrailingSlash } from '@/lib/utils'
 
 export default function ArticlesIndex(props: InferPageProps<ArticlesController, 'showArticles'>) {
   console.log('props', props)
