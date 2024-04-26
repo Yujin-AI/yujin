@@ -40,4 +40,15 @@ export default class ChatbotController {
 
     return response.redirect('/dashboard')
   }
+
+  public async delete({ params, response, auth }: HttpContext) {
+    const chatbot = await auth.user?.validateChatbotOwnership(params.chatbotSlug)
+    if (!chatbot) {
+      return response.redirect('/dashboard')
+    }
+
+    await chatbot.delete()
+
+    return response.redirect('/dashboard')
+  }
 }
