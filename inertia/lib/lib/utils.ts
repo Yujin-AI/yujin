@@ -37,3 +37,6 @@ export function getInitials(value: string): string {
     (splittedFullName.length > 1 ? splittedFullName[1].charAt(0).toUpperCase() : '')
   )
 }
+
+export const removeTrailingSlash = (value: string) => value.replace(/\/+$/, '')
+export const removeQueryParams = (value: string) => value.replace(/\?.*$/, '')
