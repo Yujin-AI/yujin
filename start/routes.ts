@@ -70,3 +70,7 @@ router
   .get(':chatbotSlug/articles', [ArticlesController, 'showArticles'])
   .as('articles.index')
   .use(middleware.auth())
+router
+  .get(':chatbotSlug/articles/:articleSlug', [ArticlesController, 'showArticle'])
+  .as('articles.show')
+  .use(middleware.auth())
