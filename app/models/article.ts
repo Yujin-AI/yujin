@@ -1,8 +1,16 @@
 import string from '@adonisjs/core/helpers/string'
-import { BaseModel, beforeCreate, belongsTo, column } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  afterDelete,
+  afterSave,
+  beforeCreate,
+  belongsTo,
+  column,
+} from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
+import TypesenseService from '#database/typesense'
 import { ArticleCrawlStatus, ArticleIndexStatus, ArticleSourceType } from '#lib/enums'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Chatbot from './chatbot.js'
@@ -89,6 +97,34 @@ export default class Article extends BaseModel {
     )
 
     article.slug = incrementor.length ? `${slug}-${Math.max(...incrementor) + 1}` : slug
+  }
+
+  @afterSave()
+  static async updateEmbeddingAndIndex(article: Article) {
+    const typesense = new TypesenseService()
+
+    await typesense.upsertDocument({
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      sourceUrl: article.sourceUrl,
+      chatbotId: article.chatbotId,
+      createdAt: article.createdAt.toMillis(),
+      updatedAt: article.updatedAt.toMillis(),
+    })
+
+    // update the index status
+    article.indexStatus = ArticleIndexStatus.SUCCESS
+    await article.save()
+  }
+
+  @afterDelete()
+  static async deleteFromIndex(article: Article) {
+    console.log('Deleting article from index', article.id)
+    const typesense = new TypesenseService()
+
+    const data = await typesense.deleteDocument(article.id)
+    console.log('Deleted article from index', data)
   }
 
   @belongsTo(() => Chatbot)

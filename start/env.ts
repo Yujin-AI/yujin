@@ -54,6 +54,17 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | TypeSense Config
+  |----------------------------------------------------------
+  */
+  TYPESENSE_HOST: Env.schema.string({ format: 'host' }),
+  TYPESENSE_PORT: Env.schema.number(),
+  TYPESENSE_PROTOCOL: Env.schema.enum(['http', 'https'] as const),
+  TYPESENSE_API_KEY: Env.schema.string(),
+  TYPESENSE_COLLECTION: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
   | Constants
   |----------------------------------------------------------
   */

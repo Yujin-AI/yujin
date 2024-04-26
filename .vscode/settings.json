@@ -12,6 +12,7 @@
     "japa",
     "lucide",
     "luxon",
+    "Millis",
     "openai",
     "ossp",
     "pino",
@@ -22,6 +23,7 @@
     "tiktoken",
     "tokenable",
     "typecheck",
+    "typesense",
     "uids",
     "vinejs",
     "yujin"
