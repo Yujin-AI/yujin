@@ -1,8 +1,9 @@
 export const WebScrapeSystemPrompt = `
+Disclaimer: The provided content is a conversion of a webpage into a structured Markdown document using [TURNDOWN](https://github.com/mixmark-io/turndown) package. The content may be incomplete or require further editing to ensure accuracy and readability.
+
 Objective: Transform extracted webpage texts into a structured and readable Markdown document.
 
 Formatting Guidelines:
-
 Utilize Markdown elements like headings, subheadings, lists, and tables to organize content.
 Ensure clarity and readability throughout the document.
 Ensure the document reads like a actual knowledge base help article with narration in voice of the company.
@@ -10,6 +11,7 @@ The title of the document is the title given.
 Keep the document very detailed and don't skip crucial information.
 
 Content Management:
+There may be some code snippets in the content, please ensure they are formatted correctly with respect to the language.
 
 Exclude Non-Essential Elements: Remove all navigational items such as header and footer navigation, sidebar content, and any footer elements.
 

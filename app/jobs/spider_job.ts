@@ -43,16 +43,18 @@ export default class SpiderJob extends Job {
     }
 
     const crawler = new CheerioCrawler({
-      async requestHandler({ enqueueLinks }) {
-        const result = await enqueueLinks({ baseUrl: url })
-        result.processedRequests.forEach((request) => {
-          console.log(request.uniqueKey, ' --> sent to article processor job')
-          queue.dispatch(
-            ArticleProcessorJob,
-            { url: request.uniqueKey, chatbotId },
-            { queueName: 'article-processor' }
-          )
-        })
+      async requestHandler({ enqueueLinks, request }) {
+        const { url, loadedUrl } = request
+        const validURL = loadedUrl ? loadedUrl : url
+
+        console.log(validURL, ' --> sent to article processor job')
+        queue.dispatch(
+          ArticleProcessorJob,
+          { url: validURL, chatbotId },
+          { queueName: 'article-processor' }
+        )
+
+        await enqueueLinks({ baseUrl: url })
       },
     })
 
