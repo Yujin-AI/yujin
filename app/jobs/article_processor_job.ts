@@ -7,6 +7,7 @@ import { removeQueryParams, removeTrailingSlash } from '#lib/utils'
 import Article from '#models/article'
 import OpenAIService from '#services/open_ai_service'
 import env from '#start/env'
+import TurndownService from 'turndown'
 
 interface ArticleProcessorJobPayload {
   url: string
@@ -101,18 +102,33 @@ export default class ArticleProcessorJob extends Job {
           const title = $('title').text() || 'Untitled'
           console.log('Scrapping: ', JSON.stringify({ url: formattedURL, title }))
 
-          $('body').find('style').remove()
+          $('script').remove()
           $('body').find('script').remove()
           $('body').find('nav').remove()
           $('body').find('footer').remove()
+          $('[class*="footer"]').find('').remove()
+          $('[id*="footer"]').find('').remove()
           $('body').find('.footer').remove()
           $('body').find('#footer').remove()
           $('body').find('iframe').remove()
           $('body').find('noscript').remove()
           $('body').find('header').remove()
-          $('body').find('img').remove()
-          $('body').find('img').remove()
           $('body').find('svg').remove()
+
+          const finalHTML = $('body')
+            .find('*')
+            .each(function () {
+              if (!$(this).text().trim()) {
+                $(this).remove()
+              }
+            })
+            .end()
+            .html()
+            ?.trim()!
+
+          const turndown = new TurndownService()
+
+          const final = turndown.turndown(finalHTML)
 
           const aiService = new OpenAIService(env.get('AI_API_KEY'))
 
@@ -125,7 +141,7 @@ export default class ArticleProcessorJob extends Job {
               role: 'user',
               content: JSON.stringify({
                 title,
-                content: $('body').text(),
+                content: final,
               }),
             },
           ])
