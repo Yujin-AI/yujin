@@ -40,9 +40,9 @@ export default class extends BaseSchema {
 
       table.string('error').nullable()
       table.integer('content_length').nullable()
-      table.boolean('is_processed').notNullable().defaultTo(false)
+      table.boolean('is_processed').notNullable().defaultTo(true)
       table.string('slug').notNullable().unique()
-      table.boolean('is_published').notNullable().defaultTo(false)
+      table.boolean('is_published').notNullable().defaultTo(true)
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
