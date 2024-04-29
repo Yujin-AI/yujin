@@ -1,27 +1,27 @@
 import { InferPageProps } from '@adonisjs/inertia/types'
-import { Link } from '@inertiajs/react'
 
 import ArticlesController from '#controllers/articles_controller'
 
-import { buttonVariants } from '@/components/ui/button'
-import { cn, removeTrailingSlash } from '@/lib/utils'
+import { columns } from '@/components/columns'
+import { DataTable } from '@/components/data_table'
+import SidebarLayout from '@/layouts/sidebar_layout'
+import { removeTrailingSlash } from '@/lib/utils'
 
 export default function ArticlesIndex(props: InferPageProps<ArticlesController, 'showArticles'>) {
-  console.log('props', props)
-  const { previousPageUrl, nextPageUrl, firstPage, lastPage, currentPage } = props.articles.meta
   let currentURL = new URL(window.location.href).pathname
+  const { chatbot, user, articles } = props
   currentURL = removeTrailingSlash(currentURL)
-  console.log('currentURL', currentURL)
   return (
-    <div>
-      <h1>Articles</h1>
+    <SidebarLayout user={user} chatbot={chatbot}>
+      {/*
       <div className="flex flex-col">
-        {props.articles.data.map((article) => (
+        {articles.data.map((article) => (
           <Link
             key={article.id}
             as="a"
             // ':chatbotSlug/articles/:articleSlug'
             href={currentURL + '/' + article.slug}
+            //href={chatbot.slug + '/articles/' + article.slug}
             className="text-blue-500 cursor-pointer hover:underline"
           >
             {article.title}
@@ -38,13 +38,28 @@ export default function ArticlesIndex(props: InferPageProps<ArticlesController, 
       </Link>
 
       <Link
-        href={currentURL + nextPageUrl}
+        href={nextPageUrl ? currentURL + nextPageUrl : ''}
         disabled={!nextPageUrl}
         as="button"
         className={cn(buttonVariants({ variant: 'default' }))}
       >
         Next
       </Link>
-    </div>
+      */}
+
+      <div className="flex-col flex-1 hidden h-full p-8 space-y-8 md:flex">
+        <div className="flex items-center justify-between space-y-2">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Articles</h2>
+            <p className="text-muted-foreground">
+              This is where you train your chatbot. Add articles to help your chatbot understand
+              user queries.
+            </p>
+          </div>
+          <div className="flex items-center space-x-2"></div>
+        </div>
+        <DataTable data={articles} columns={columns} />
+      </div>
+    </SidebarLayout>
   )
 }

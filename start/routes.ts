@@ -65,6 +65,7 @@ router
     router.delete('chatbots/:chatbotSlug', [ChatbotController, 'delete'])
   })
   .use(middleware.auth())
+
 /*
 |--------------------------------------------------------------------------
 | Article routes
@@ -78,3 +79,4 @@ router
   .get(':chatbotSlug/articles/:articleSlug', [ArticlesController, 'showArticle'])
   .as('articles.show')
   .use(middleware.auth())
+router.get('api/:chatbotSlug/articles', [ArticlesController, 'apiArticles']).use(middleware.auth())
