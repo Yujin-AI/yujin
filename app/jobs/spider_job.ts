@@ -30,9 +30,9 @@ export default class SpiderJob extends BaseJob {
       console.log('Shopify store detected')
       const response = await fetch(url + '/products.json?limit=1000')
       const products = (await response.json()) as unknown as ShopifyStoreJSON
-      products.products.forEach((product) => {
+      products.products.forEach(async (product) => {
         const productURL = `${url}/products/${product.handle}.json`
-        ArticleProcessorJob.enqueue({ url: productURL, chatbotId })
+        await ArticleProcessorJob.enqueue({ url: productURL, chatbotId })
       })
       return
     }
@@ -43,7 +43,7 @@ export default class SpiderJob extends BaseJob {
         const validURL = loadedUrl ? loadedUrl : url
 
         console.log(validURL, ' --> sent to article processor job')
-        ArticleProcessorJob.enqueue({ url: validURL, chatbotId })
+        await ArticleProcessorJob.enqueue({ url: validURL, chatbotId })
 
         await enqueueLinks({ baseUrl: url })
       },
@@ -55,7 +55,7 @@ export default class SpiderJob extends BaseJob {
   /**
    * Base Entry point
    */
-  async handle(payload: SpiderJobPayload) {
+  async perform(payload: SpiderJobPayload) {
     console.log('Spider Job with payload: ', payload)
     try {
       const data = await SpiderJobValidator.validate(payload)
@@ -64,9 +64,4 @@ export default class SpiderJob extends BaseJob {
       console.error(error)
     }
   }
-
-  /**
-   * This is an optional method that gets called when the retries has exceeded and is marked failed.
-   */
-  async rescue() {}
 }

@@ -74,4 +74,11 @@ export default defineConfig({
     ],
     forceExit: false,
   },
+
+  /*
+  |---------------------------------------------------------------------------
+  | Ignore directories
+  |---------------------------------------------------------------------------
+  */
+  // metaFiles: [{ pattern: 'storage/**/*', reloadServer: false }],
 })

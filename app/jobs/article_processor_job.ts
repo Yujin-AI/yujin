@@ -20,15 +20,11 @@ export default class ArticleProcessorJob extends BaseJob {
     super()
     this.aiService = new OpenAIService(env.get('AI_API_KEY'))
   }
-  // This is the path to the file that is used to create the job
-  static get $$filepath() {
-    return import.meta.url
-  }
 
   /**
    * Base Entry point
    */
-  async handle(payload: ArticleProcessorJobPayload) {
+  async perform(payload: ArticleProcessorJobPayload) {
     try {
       const { url, chatbotId } = payload
       if (url.endsWith('.json')) {
@@ -172,9 +168,4 @@ export default class ArticleProcessorJob extends BaseJob {
       console.error(error)
     }
   }
-
-  /**
-   * This is an optional method that gets called when the retries has exceeded and is marked failed.
-   */
-  async rescue() {}
 }

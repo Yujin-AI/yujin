@@ -50,6 +50,7 @@
     "@types/uuid": "^9.0.8",
     "depcheck": "1.4.7",
     "eslint": "^9.1.1",
+    "hot-hook": "0.2.5",
     "pino-pretty": "^11.0.0",
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
