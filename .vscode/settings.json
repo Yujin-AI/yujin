@@ -2,6 +2,8 @@
   "cSpell.words": [
     "adonisjs",
     "adonisrc",
+    "autoswagger",
+    "bodyparser",
     "chatbots",
     "clsx",
     "crawlee",
@@ -19,6 +21,7 @@
     "pino",
     "predev",
     "queueadd",
+    "resque",
     "rlanz",
     "simplecrawler",
     "tanstack",

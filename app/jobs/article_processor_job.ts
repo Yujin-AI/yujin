@@ -1,5 +1,6 @@
-import { Job } from '@rlanz/bull-queue'
+import { BaseJob } from 'adonis-resque'
 import { CheerioCrawler } from 'crawlee'
+import TurndownService from 'turndown'
 
 import { ShopifyScrapePrompt, WebScrapeSystemPrompt } from '#lib/constants'
 import { ArticleCrawlStatus } from '#lib/enums'
@@ -7,14 +8,13 @@ import { removeQueryParams, removeTrailingSlash } from '#lib/utils'
 import Article from '#models/article'
 import OpenAIService from '#services/open_ai_service'
 import env from '#start/env'
-import TurndownService from 'turndown'
 
 interface ArticleProcessorJobPayload {
   url: string
   chatbotId: string
 }
 
-export default class ArticleProcessorJob extends Job {
+export default class ArticleProcessorJob extends BaseJob {
   private aiService: OpenAIService
   constructor() {
     super()

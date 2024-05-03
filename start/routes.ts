@@ -16,8 +16,6 @@ import DashboardController from '#controllers/dashboard_controller'
 
 import { middleware } from './kernel.js'
 
-router.on('/').renderInertia('home', { version: 6 })
-
 /*
 |--------------------------------------------------------------------------
 | Authentication routes
@@ -25,20 +23,11 @@ router.on('/').renderInertia('home', { version: 6 })
 */
 router
   .group(() => {
-    router.get('signup', [AuthController, 'showSignup']).as('signup')
-    router.get('login', [AuthController, 'showLogin']).as('login')
+    router.post('/signup', [AuthController, 'signup']).as('signup')
+    router.post('/login', [AuthController, 'login']).as('login')
+    router.post('/logout', [AuthController, 'logout']).as('logout').use(middleware.auth())
   })
-  .use(middleware.guest())
-
-router.post('logout', [AuthController, 'logout']).use(middleware.auth())
-
-router
-  .group(() => {
-    router.post('signup', [AuthController, 'signup'])
-    router.post('login', [AuthController, 'login'])
-  })
-  .prefix('auth')
-  .use(middleware.guest())
+  .prefix('api/auth')
 
 /*
 |--------------------------------------------------------------------------

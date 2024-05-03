@@ -1,5 +1,4 @@
-import { Job } from '@rlanz/bull-queue'
-import queue from '@rlanz/bull-queue/services/main'
+import { BaseJob } from 'adonis-resque'
 import { CheerioCrawler } from 'crawlee'
 
 import { ShopifyStoreJSON } from '#lib/types'
@@ -12,7 +11,7 @@ interface SpiderJobPayload {
   chatbotId: string
 }
 
-export default class SpiderJob extends Job {
+export default class SpiderJob extends BaseJob {
   // This is the path to the file that is used to create the job
   static get $$filepath() {
     return import.meta.url
@@ -33,11 +32,7 @@ export default class SpiderJob extends Job {
       const products = (await response.json()) as unknown as ShopifyStoreJSON
       products.products.forEach((product) => {
         const productURL = `${url}/products/${product.handle}.json`
-        queue.dispatch(
-          ArticleProcessorJob,
-          { url: productURL, chatbotId },
-          { queueName: 'article-processor' }
-        )
+        ArticleProcessorJob.enqueue({ url: productURL, chatbotId })
       })
       return
     }
@@ -48,11 +43,7 @@ export default class SpiderJob extends Job {
         const validURL = loadedUrl ? loadedUrl : url
 
         console.log(validURL, ' --> sent to article processor job')
-        queue.dispatch(
-          ArticleProcessorJob,
-          { url: validURL, chatbotId },
-          { queueName: 'article-processor' }
-        )
+        ArticleProcessorJob.enqueue({ url: validURL, chatbotId })
 
         await enqueueLinks({ baseUrl: url })
       },

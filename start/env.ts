@@ -38,15 +38,6 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
-  | Variables for @rlanz/bull-queue
-  |----------------------------------------------------------
-  */
-  QUEUE_REDIS_HOST: Env.schema.string({ format: 'host' }),
-  QUEUE_REDIS_PORT: Env.schema.number(),
-  QUEUE_REDIS_PASSWORD: Env.schema.string.optional(),
-
-  /*
-  |----------------------------------------------------------
   | AI API Key
   |----------------------------------------------------------
   */
@@ -72,4 +63,13 @@ export default await Env.create(new URL('../', import.meta.url), {
   MAX_CRAWLING_DEPS: Env.schema.number(),
   CRAWLING_INTERVAL: Env.schema.number(),
   CRAWLER_TIME_LIMIT: Env.schema.number(),
+
+  /*
+  |----------------------------------------------------------
+  | Redis Config
+  |----------------------------------------------------------
+  */
+  REDIS_HOST: Env.schema.string({ format: 'host' }),
+  REDIS_PORT: Env.schema.number(),
+  REDIS_PASSWORD: Env.schema.string.optional(),
 })
