@@ -38,6 +38,7 @@ export default defineConfig({
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/redis/redis_provider'),
     () => import('adonis-resque/providers/resque_provider'),
+    () => import('./providers/open_ai_provider.js'),
   ],
 
   /*
@@ -80,5 +81,5 @@ export default defineConfig({
   | Ignore directories
   |---------------------------------------------------------------------------
   */
-  // metaFiles: [{ pattern: 'storage/**/*', reloadServer: false }],
+  metaFiles: [{ pattern: 'storage/**/*', reloadServer: true }],
 })

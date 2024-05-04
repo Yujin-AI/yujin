@@ -35,6 +35,9 @@ importers:
       adonis-resque:
         specifier: 1.2.1
         version: 1.2.1(@adonisjs/core@6.9.0(@adonisjs/assembler@7.5.1(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2))(@adonisjs/redis@8.0.1(@adonisjs/core@6.9.0(@adonisjs/assembler@7.5.1(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2)))
+      cheerio:
+        specifier: 1.0.0-rc.12
+        version: 1.0.0-rc.12
       crawlee:
         specifier: 3.9.2
         version: 3.9.2(playwright@1.43.1)

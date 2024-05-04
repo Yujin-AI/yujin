@@ -3,6 +3,7 @@ import { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections.js'
 
 import env from '#start/env'
 
+// todo)) move it to providers as singleton
 export default class TypesenseService {
   private client: typesense.Client
   private readonly collectionName = 'articles'

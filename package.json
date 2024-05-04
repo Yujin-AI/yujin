@@ -13,7 +13,10 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "depcheck": "depcheck"
+    "depcheck": "depcheck",
+    "job:spider": "node ace resque:start --schedule=false --worker --is-multi --queue-name=spider",
+    "job:shopify": "node ace resque:start --schedule=false --worker --is-multi --queue-name=shopify_processor",
+    "job:scheduler": "node ace resque:start --schedule --worker=false"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
@@ -29,6 +32,7 @@
     "#abilities/*": "./app/abilities/*.js",
     "#lib/*": "./app/lib/*.js",
     "#jobs/*": "./app/jobs/*.js",
+    "#provider": "./providers/*.js",
     "#database/*": "./database/*.js",
     "#tests/*": "./tests/*.js",
     "#start/*": "./start/*.js",
@@ -66,6 +70,7 @@
     "@vinejs/vine": "^2.0.0",
     "adonis-autoswagger": "^3.22.0",
     "adonis-resque": "1.2.1",
+    "cheerio": "1.0.0-rc.12",
     "crawlee": "3.9.2",
     "luxon": "^3.4.4",
     "openai": "4.40.1",

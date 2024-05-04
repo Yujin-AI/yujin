@@ -10,14 +10,14 @@ const resqueConfig = defineConfig({
    * also, DO NOT enable for math-heavy jobs, even in the dev or staging environment.
    *
    */
-  runWorkerInWebEnv: true,
+  runWorkerInWebEnv: false, // default is true, running it in separate process
   /**
    * when runScheduler enabled, it starts with worker
    * if you'd like to run scheduler in the separated processes
    * please turn runScheduler off, and run command
    * node ace resque:start --scheduler
    */
-  runScheduler: true,
+  runScheduler: false,
   isMultiWorkerEnabled: true,
   multiWorkerOption: {
     minTaskProcessors: 1,
