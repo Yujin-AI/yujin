@@ -14,12 +14,12 @@ export default class DashboardController {
     return response.redirect(`/${user.defaultChatbot?.slug}/dashboard`)
   }
 
-  public async showDashboard({ inertia, auth, params, response }: HttpContext) {
+  public async showDashboard({ auth, params, response }: HttpContext) {
     await auth.user?.load('ownedChatbots')
     const chatbot = auth.user?.ownedChatbots.find((chatbot) => chatbot.slug === params.chatbotSlug)
     if (!chatbot) {
       return response.redirect('/dashboard')
     }
-    return inertia.render('dashboard', { chatbot })
+    // return inertia.render('dashboard', { chatbot })
   }
 }

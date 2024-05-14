@@ -1,0 +1,39 @@
+services:
+  server:
+    env_file:
+      - ../../.env
+    container_name: server
+    build:
+      context: ../../
+      dockerfile: docker/prod/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3333
+      - HOST=0.0.0.0
+    command: 'node bin/server.js'
+    volumes:
+      - ../../:/app
+    ports:
+      - '3333:3333'
+    restart: on-failure
+    networks:
+      - backend
+
+volumes:
+  server:
+
+networks:
+  backend:
+    driver: bridge
+
+  # job_spider:
+  #   container_name: job_spider
+  #   build:
+  #     context: ../../
+  #     dockerfile: docker/prod/Dockerfile
+  #   environment:
+  #     - NODE_ENV=production
+  #   volumes:
+  #     - ../../:/app
+  #   command: 'node jobs/spider.js'
+  #   restart: on-failure
