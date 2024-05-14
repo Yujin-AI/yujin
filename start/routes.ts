@@ -9,14 +9,16 @@
 
 import router from '@adonisjs/core/services/router'
 
-import ArticlesController from '#controllers/articles_controller'
-import AuthController from '#controllers/auth_controller'
-import ChatbotController from '#controllers/chatbot_controller'
-import DashboardController from '#controllers/dashboard_controller'
+const ArticlesController = () => import('#controllers/articles_controller')
+const AuthController = () => import('#controllers/auth_controller')
+const ChatbotController = () => import('#controllers/chatbot_controller')
+// const DashboardController = () => import('#controllers/dashboard_controller')
 
 import { middleware } from './kernel.js'
 
-router.on('/').renderInertia('home', { version: 6 })
+router.get('/', async ({ response }) => {
+  response.send({ message: 'Hello world' })
+})
 
 /*
 |--------------------------------------------------------------------------
