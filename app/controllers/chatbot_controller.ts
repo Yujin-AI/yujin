@@ -5,11 +5,11 @@ import User from '#models/user'
 import { createChatbotValidator, selectChatbotValidator } from '#validators/chatbot_validator'
 
 export default class ChatbotController {
-  public async index({ auth }: HttpContext) {
+  public async index({ auth, response }: HttpContext) {
     const user = auth.user as User
     await user.load('ownedChatbots')
 
-    return user.ownedChatbots
+    return response.ok({ success: true, data: user.ownedChatbots })
   }
 
   public async show({ params, response }: HttpContext) {
