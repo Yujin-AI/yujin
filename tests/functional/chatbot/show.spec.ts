@@ -7,11 +7,16 @@ test.group('Chatbot show', () => {
     const chatbots = await user.related('ownedChatbots').create({
       name: 'Test Chatbot',
       url: 'https://example.com',
+      ownerId: user.id,
+      creatorId: user.id,
     })
     const response = await client.get(route('chatbots.index')).loginAs(user)
 
     response.assertStatus(200)
-    response.assertBodyContains([chatbots.toJSON()])
+    response.assertBodyContains({
+      success: true,
+      data: [chatbots.toJSON()],
+    })
   })
 
   test('should not get chatbots if user is not authenticated', async ({ client, route }) => {
