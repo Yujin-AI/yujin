@@ -1,3 +1,4 @@
+import { errors as authErrors } from '@adonisjs/auth'
 import { ExceptionHandler, HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
 
@@ -13,6 +14,11 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    if (error instanceof authErrors.E_INVALID_CREDENTIALS) {
+      return ctx.response
+        .status(error.status)
+        .json({ success: false, message: error.getResponseMessage(error, ctx) })
+    }
     return super.handle(error, ctx)
   }
 

@@ -7,6 +7,17 @@
 |
 */
 
+// todo))
+/*
+ * All the todo
+ * 1. Remove all the inertia and frontend related code
+ * 2. Edit the old implementation of the features to api based
+ * 3. Typesense to MeiliSearch
+ * 4. Improve the jobs
+ *  - Shopify, Articles, Embedding & Indexing
+ * 5.
+ */
+
 import router from '@adonisjs/core/services/router'
 
 const ArticlesController = () => import('#controllers/articles_controller')
