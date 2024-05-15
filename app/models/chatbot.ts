@@ -3,7 +3,6 @@ import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
-import TypesenseService from '#database/typesense'
 import { BaseModel, afterDelete, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import Article from './article.js'
 import User from './user.js'
@@ -27,7 +26,7 @@ export default class Chatbot extends BaseModel {
   declare creatorId?: string
 
   @column()
-  declare ownerId?: string
+  declare ownerId: string
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -71,12 +70,21 @@ export default class Chatbot extends BaseModel {
     chatbot.slug = incrementor.length ? `${slug}-${Math.max(...incrementor) + 1}` : slug
   }
 
-  @afterDelete()
+  @afterDelete() //todo))
   static async deleteArticlesIndexes(chatbot: Chatbot) {
-    console.log('Deleing all the articles indexes for chatbot', chatbot.id)
-    const typesense = new TypesenseService()
-    await typesense.deleteDocumentsByChatbotId(chatbot.id)
-    console.log('DONE')
+    // console.log('Deleing all the articles indexes for chatbot', chatbot.id)
+    // const typesense = new TypesenseService()
+    // await typesense.deleteDocumentsByChatbotId(chatbot.id)
+    // console.log('DONE')
+  }
+
+  static getChatbotBySlugOrId(chatbotSlug: string) {
+    const isUUID = chatbotSlug.match(
+      /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+    )
+    return isUUID
+      ? Chatbot.query().where('id', chatbotSlug).first()
+      : Chatbot.query().where('slug', chatbotSlug).first()
   }
 
   @hasOne(() => User, {

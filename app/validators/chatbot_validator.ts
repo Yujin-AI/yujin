@@ -9,3 +9,9 @@ export const createChatbotValidator = vine.compile(
     }),
   })
 )
+
+export const selectChatbotValidator = vine.compile(
+  vine.object({
+    chatbotSlug: vine.string().minLength(3).maxLength(255),
+  })
+)

@@ -15,7 +15,7 @@
  * 3. Typesense to MeiliSearch
  * 4. Improve the jobs
  *  - Shopify, Articles, Embedding & Indexing
- * 5.
+ * 5. Add routes to resources
  */
 
 import router from '@adonisjs/core/services/router'
@@ -64,9 +64,15 @@ router
 router
   .group(() => {
     router.get('chatbots', [ChatbotController, 'index']).as('chatbots.index')
-    router.post('chatbots', [ChatbotController, 'store'])
-    router.put('chatbots/select', [ChatbotController, 'selectChatbot'])
-    router.delete('chatbots/:chatbotSlug', [ChatbotController, 'delete'])
+    router.post('chatbots', [ChatbotController, 'store']).as('chatbots.store')
+
+    router
+      .group(() => {
+        router.get('chatbots/:chatbotSlug', [ChatbotController, 'show']).as('chatbots.show')
+        router.put('chatbots/select', [ChatbotController, 'selectChatbot']).as('chatbots.select')
+        router.delete('chatbots/:chatbotSlug', [ChatbotController, 'delete']).as('chatbots.delete')
+      })
+      .use(middleware.validateChatbotOwnership())
   })
   .use(middleware.auth())
   .prefix('api')
