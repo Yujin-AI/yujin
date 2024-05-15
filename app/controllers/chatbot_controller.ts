@@ -54,7 +54,6 @@ export default class ChatbotController {
 
   public async delete({ params, response }: HttpContext) {
     const chatbot = await Chatbot.getChatbotBySlugOrId(params.chatbotSlug)
-    console.log('Chatbot:', chatbot)
     if (!chatbot) {
       return response.notFound({ success: false, message: 'Chatbot not found' })
     }
