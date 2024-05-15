@@ -28,11 +28,6 @@ const DashboardController = () => import('#controllers/dashboard_controller')
 import { middleware } from './kernel.js'
 
 router.get('/', async ({ response }) => {
-  // const queued = await queue.queued('default', 0, 2000)
-  // const jobs = queue.jobs
-  // const length = await queue.length('default')
-  // const stats = await queue.stats()
-  // response.send({ message: 'Hello world', queued, jobs, length, stats })
   response.send({ message: 'Hello world' })
 })
 
