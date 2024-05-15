@@ -33,7 +33,7 @@ export default class AuthController {
 
     const userAlreadyExists = await User.findBy('email', payload.email)
     if (userAlreadyExists !== null) {
-      return response.badRequest({ success: false, message: 'Please login!!' })
+      return response.conflict({ success: false, message: 'Please login!!' })
     }
 
     const user = await User.create(payload)
