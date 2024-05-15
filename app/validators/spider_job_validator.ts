@@ -7,6 +7,5 @@ export const SpiderJobValidator = vine.compile(
       protocols: ['http', 'https'],
     }),
     chatbotId: vine.string().uuid(),
-    // .activeUrl(),
   })
 )

@@ -1,6 +1,7 @@
+import { HttpStatus } from '#lib/enums'
+import { errors as authErrors } from '@adonisjs/auth'
+import { ExceptionHandler, HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
-import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
-import type { StatusPageRange, StatusPageRenderer } from '@adonisjs/core/types/http'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -10,26 +11,15 @@ export default class HttpExceptionHandler extends ExceptionHandler {
   protected debug = !app.inProduction
 
   /**
-   * Status pages are used to display a custom HTML pages for certain error
-   * codes. You might want to enable them in production only, but feel
-   * free to enable them in development as well.
-   */
-  protected renderStatusPages = app.inProduction
-
-  /**
-   * Status pages is a collection of error code range and a callback
-   * to return the HTML contents to send as a response.
-   */
-  protected statusPages: Record<StatusPageRange, StatusPageRenderer> = {
-    '404': (error, { inertia }) => inertia.render('errors/not_found', { error }),
-    '500..599': (error, { inertia }) => inertia.render('errors/server_error', { error }),
-  }
-
-  /**
    * The method is used for handling errors and returning
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    if (error instanceof authErrors.E_INVALID_CREDENTIALS) {
+      return ctx.response
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ success: false, message: error.getResponseMessage(error, ctx) })
+    }
     return super.handle(error, ctx)
   }
 

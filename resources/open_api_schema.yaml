@@ -1,0 +1,801 @@
+openapi: 3.0.1
+info:
+  title: Yujin
+  description: ''
+  version: 1.0.0
+tags:
+  - name: Auth
+  - name: chatbot
+paths:
+  /auth/signup:
+    post:
+      summary: Signup
+      deprecated: false
+      description: Create a new user
+      tags:
+        - Auth
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  minLength: 3
+                  example:
+                    - John
+                lastName:
+                  type: string
+                  example:
+                    - Doe
+                  minLength: 3
+                email:
+                  type: string
+                  format: email
+                  example:
+                    - test@example.com
+                  writeOnly: true
+                password:
+                  type: string
+                  minLength: 8
+                  example:
+                    - Abcd@1234
+                  format: password
+                  writeOnly: true
+                  pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+            example:
+              firstName: John
+              lastName: Doe
+              email: test@example.com
+              password: Abcd@1234
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      email:
+                        type: string
+                      id:
+                        type: string
+                        format: uuid
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+                      name:
+                        type: string
+                      token:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          name:
+                            type: string
+                          token:
+                            type: string
+                          abilities:
+                            type: array
+                            items:
+                              type: string
+                          lastUsedAt:
+                            type: string
+                            format: date-time
+                            nullable: true
+                          expiresAt:
+                            type: string
+                        required:
+                          - type
+                          - name
+                          - token
+                          - abilities
+                          - lastUsedAt
+                          - expiresAt
+                    required:
+                      - firstName
+                      - lastName
+                      - email
+                      - id
+                      - createdAt
+                      - updatedAt
+                      - name
+                      - token
+                required:
+                  - success
+                  - message
+                  - data
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                required:
+                  - success
+                  - message
+              examples:
+                '1':
+                  summary: Exception
+                  value:
+                    success: false
+                    message: Please login!!
+      security: []
+  /auth/login:
+    post:
+      summary: Login
+      deprecated: false
+      description: Login user
+      tags:
+        - Auth
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+            example:
+              email: sayeed205@gmail.com
+              password: 9015@Yujin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      defaultChatbotId:
+                        type: string
+                        format: uuid
+                        nullable: true
+                      name:
+                        type: string
+                      token:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          name:
+                            type: string
+                          token:
+                            type: string
+                          abilities:
+                            type: array
+                            items:
+                              type: string
+                          lastUsedAt:
+                            type: string
+                            format: date-time
+                            nullable: true
+                          expiresAt:
+                            type: string
+                        required:
+                          - type
+                          - name
+                          - token
+                          - abilities
+                          - lastUsedAt
+                          - expiresAt
+                    required:
+                      - id
+                      - email
+                      - firstName
+                      - lastName
+                      - createdAt
+                      - updatedAt
+                      - defaultChatbotId
+                      - name
+                      - token
+                required:
+                  - success
+                  - message
+                  - data
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    success: true
+                    message: Login successful
+                    data:
+                      id: bb9ada67-2bb0-425f-8919-5859f4c73066
+                      email: sayeed205@gmail.com
+                      firstName: Sayed
+                      lastName: Ahmed
+                      createdAt: '2024-05-15T01:22:30.667+00:00'
+                      updatedAt: '2024-05-15T01:22:30.668+00:00'
+                      defaultChatbotId: null
+                      name: Sayed Ahmed
+                      token:
+                        type: bearer
+                        name: login
+                        token: >-
+                          oat_NTFlYzAxZjAtYzExYy00NDY1LWE4NDMtMzM0ZjFhYjQ5NTNi.dXgtVVNpS1o5bFlZOHkyeTl5cTVkNkhwLU9aeU1wTFhIY3gzSGxkTjQyOTc2NTk1
+                        abilities:
+                          - '*'
+                        lastUsedAt: null
+                        expiresAt: '2024-06-14T01:23:10.287Z'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                required:
+                  - success
+                  - message
+              examples:
+                '1':
+                  summary: Exception
+                  value:
+                    success: false
+                    message: Invalid user credentials
+      security: []
+  /chatbots:
+    post:
+      summary: Create Chatbot
+      deprecated: false
+      description: ''
+      tags:
+        - chatbot
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
+              required:
+                - name
+                - url
+            example:
+              name: NPM
+              url: https://npmjs.org
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+                  ownerId:
+                    type: string
+                    format: uuid
+                  creatorId:
+                    type: string
+                    format: uuid
+                  id:
+                    type: string
+                    format: uuid
+                  slug:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+                required:
+                  - name
+                  - url
+                  - ownerId
+                  - creatorId
+                  - id
+                  - slug
+                  - createdAt
+                  - updatedAt
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                required:
+                  - errors
+              examples:
+                '1':
+                  summary: Unauthorized
+                  value:
+                    errors:
+                      - message: Unauthorized access
+      security:
+        - bearer: []
+    get:
+      summary: Get Chatbots
+      deprecated: false
+      description: Get all the owned chatbots
+      tags:
+        - chatbot
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    slug:
+                      type: string
+                    url:
+                      type: string
+                    creatorId:
+                      type: string
+                    ownerId:
+                      type: string
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    - id: f56b457a-89a7-48fa-9117-87ab8201a807
+                      name: NPM
+                      slug: npm
+                      url: https://npmjs.org
+                      creatorId: 9af4cf6b-d0bb-40dd-8e2b-f3a354e0bbb4
+                      ownerId: 9af4cf6b-d0bb-40dd-8e2b-f3a354e0bbb4
+                      createdAt: '2024-04-30T09:36:03.291+00:00'
+                      updatedAt: '2024-04-30T09:36:03.291+00:00'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                required:
+                  - errors
+              examples:
+                '1':
+                  summary: Unauthorized
+                  value:
+                    errors:
+                      - message: Unauthorized access
+      security:
+        - bearer: []
+  /chatbots/DEFAULT_CHATBOT_ID:
+    get:
+      summary: Get Chatbot by ID
+      deprecated: false
+      description: Get all the owned chatbots
+      tags:
+        - chatbot
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  slug:
+                    type: string
+                  url:
+                    type: string
+                  creatorId:
+                    type: string
+                  ownerId:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                  - id
+                  - name
+                  - slug
+                  - url
+                  - creatorId
+                  - ownerId
+                  - createdAt
+                  - updatedAt
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    id: f56b457a-89a7-48fa-9117-87ab8201a807
+                    name: NPM
+                    slug: npm
+                    url: https://npmjs.org
+                    creatorId: 9af4cf6b-d0bb-40dd-8e2b-f3a354e0bbb4
+                    ownerId: 9af4cf6b-d0bb-40dd-8e2b-f3a354e0bbb4
+                    createdAt: '2024-04-30T09:36:03.291+00:00'
+                    updatedAt: '2024-04-30T09:36:03.291+00:00'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                required:
+                  - errors
+              examples:
+                '1':
+                  summary: Unauthorized
+                  value:
+                    errors:
+                      - message: Unauthorized access
+        '422':
+          description: Parameter Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        rule:
+                          type: string
+                        field:
+                          type: string
+                required:
+                  - errors
+              examples:
+                '1':
+                  summary: Parameter Error
+                  value:
+                    errors:
+                      - message: The id field must be a valid UUID
+                        rule: uuid
+                        field: params.id
+      security:
+        - bearer: []
+    delete:
+      summary: Delete Chatbot by ID
+      deprecated: false
+      description: Select a default chatbot for current user
+      tags:
+        - chatbot
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      slug:
+                        type: string
+                      url:
+                        type: string
+                      creatorId:
+                        type: string
+                      ownerId:
+                        type: string
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+                    required:
+                      - id
+                      - name
+                      - slug
+                      - url
+                      - creatorId
+                      - ownerId
+                      - createdAt
+                      - updatedAt
+                required:
+                  - message
+                  - data
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    message: Default chatbot selected successfully
+                    data:
+                      id: f56b457a-89a7-48fa-9117-87ab8201a807
+                      name: NPM
+                      slug: npm
+                      url: https://npmjs.org
+                      creatorId: 9af4cf6b-d0bb-40dd-8e2b-f3a354e0bbb4
+                      ownerId: 9af4cf6b-d0bb-40dd-8e2b-f3a354e0bbb4
+                      createdAt: '2024-04-30T09:36:03.291+00:00'
+                      updatedAt: '2024-04-30T09:36:03.291+00:00'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                required:
+                  - errors
+              examples:
+                '1':
+                  summary: Unauthorized
+                  value:
+                    errors:
+                      - message: Unauthorized access
+        '422':
+          description: Parameter Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        rule:
+                          type: string
+                        field:
+                          type: string
+                required:
+                  - errors
+              examples:
+                '1':
+                  summary: Wrong Params
+                  value:
+                    errors:
+                      - message: The chatbotId field must be defined
+                        rule: required
+                        field: params.chatbotId
+      security:
+        - bearer: []
+  /chatbots/select:
+    put:
+      summary: Select Default Chatbot
+      deprecated: false
+      description: Select a default chatbot for current user
+      tags:
+        - chatbot
+      parameters:
+        - name: chatbotId
+          in: query
+          description: ''
+          required: true
+          example: f56b457a-89a7-48fa-9117-87ab8201a807/select
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      slug:
+                        type: string
+                      url:
+                        type: string
+                      creatorId:
+                        type: string
+                      ownerId:
+                        type: string
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+                    required:
+                      - id
+                      - name
+                      - slug
+                      - url
+                      - creatorId
+                      - ownerId
+                      - createdAt
+                      - updatedAt
+                required:
+                  - message
+                  - data
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    message: Default chatbot selected successfully
+                    data:
+                      id: f56b457a-89a7-48fa-9117-87ab8201a807
+                      name: NPM
+                      slug: npm
+                      url: https://npmjs.org
+                      creatorId: 9af4cf6b-d0bb-40dd-8e2b-f3a354e0bbb4
+                      ownerId: 9af4cf6b-d0bb-40dd-8e2b-f3a354e0bbb4
+                      createdAt: '2024-04-30T09:36:03.291+00:00'
+                      updatedAt: '2024-04-30T09:36:03.291+00:00'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                required:
+                  - errors
+              examples:
+                '1':
+                  summary: Unauthorized
+                  value:
+                    errors:
+                      - message: Unauthorized access
+        '422':
+          description: Parameter Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        rule:
+                          type: string
+                        field:
+                          type: string
+                required:
+                  - errors
+              examples:
+                '1':
+                  summary: Wrong Params
+                  value:
+                    errors:
+                      - message: The chatbotId field must be defined
+                        rule: required
+                        field: params.chatbotId
+      security:
+        - bearer: []
+components:
+  schemas:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+  - url: http://localhost:3333/api
+    description: Develop Env

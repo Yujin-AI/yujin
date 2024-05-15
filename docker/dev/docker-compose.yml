@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: postgres_container
+    container_name: pg_db
     image: postgres
     environment:
       POSTGRES_USER: yujin
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
 
   pgadmin:
-    container_name: pg
+    container_name: pg_dashboard
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: sayeed205@gmail.com
@@ -47,6 +47,19 @@ services:
       - typesense:/data
     command: '--data-dir /data --api-key=xyz --enable-cors'
 
+  resque-web:
+    image: appwrite/resque-web
+    container_name: resque-web
+    ports:
+      - '5678:5678'
+    environment:
+      - RESQUE_WEB_HOST=redis # (OPTIONAL - Use only if different than the default 127.0.0.1)
+      - RESQUE_WEB_PORT=6379 # (OPTIONAL - Use only if different the default 6379)
+      - RESQUE_WEB_HTTP_BASIC_AUTH_USER= # (OPTIONAL - if not set no password used)
+      - RESQUE_WEB_HTTP_BASIC_AUTH_PASSWORD= # (OPTIONAL - if not set no password used)
+    depends_on:
+      - redis
+    restart: unless-stopped
 networks:
   postgres:
     driver: bridge

@@ -1,6 +1,8 @@
 {
   "extends": "@adonisjs/tsconfig/tsconfig.app.json",
+  "esModuleInterop": true,
   "compilerOptions": {
+    "resolveJsonModule": true,
     "rootDir": "./",
     "outDir": "./build",
     "paths": {
@@ -11,19 +13,17 @@
       "#services/*": ["./app/services/*.js"],
       "#listeners/*": ["./app/listeners/*.js"],
       "#events/*": ["./app/events/*.js"],
-      "#middleware/*": ["./app/middleware/*.js"],
+      "#middlewares/*": ["./app/middlewares/*.js"],
       "#validators/*": ["./app/validators/*.js"],
-      "#lib/*": ["./app/lib/*.js"],
-      "#policies/*": ["./app/policies/*.js"],
+      "#polices/*": ["./app/polices/*.js"],
       "#abilities/*": ["./app/abilities/*.js"],
+      "#lib/*": ["./app/lib/*.js"],
       "#jobs/*": ["./app/jobs/*.js"],
       "#providers/*": ["./providers/*.js"],
       "#database/*": ["./database/*.js"],
       "#tests/*": ["./tests/*.js"],
       "#start/*": ["./start/*.js"],
-      "#config/*": ["./config/*.js"],
-      "@/*": ["./inertia/lib/*"]
+      "#config/*": ["./config/*.js"]
     }
-  },
-  "exclude": ["./inertia/**/*", "node_modules", "build"]
+  }
 }

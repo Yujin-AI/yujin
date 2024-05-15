@@ -9,8 +9,8 @@
 |
 */
 
-import 'reflect-metadata'
 import { Ignitor, prettyPrintError } from '@adonisjs/core'
+import 'reflect-metadata'
 
 /**
  * URL to the application root. AdonisJS need it to resolve
@@ -35,7 +35,8 @@ new Ignitor(APP_ROOT, { importer: IMPORTER })
       await import('#start/env')
     })
     app.listen('SIGTERM', () => app.terminate())
-    app.listenIf(app.managedByPm2, 'SIGINT', () => app.terminate())
+    // app.listenIf(app.managedByPm2, 'SIGINT', () => app.terminate())
+    app.listen('SIGINT', () => app.terminate()) //https://github.com/shiny/adonis-resque#notice-for-the-graceful-exit
   })
   .httpServer()
   .start()

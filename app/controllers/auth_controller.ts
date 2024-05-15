@@ -1,47 +1,56 @@
-import { HttpContext } from '@adonisjs/core/http'
+import type { HttpContext } from "@adonisjs/core/http";
+
+import User from "#models/user";
+import { loginValidator, signUpValidator } from "#validators/auth_validator";
 
 export default class AuthController {
-  public async showLogin({}: HttpContext) {
-    // return inertia.render('auth/login')
+  public async login({ request, response }: HttpContext) {
+    const { email, password } = await request.validateUsing(loginValidator);
+    const user = await User.verifyCredentials(email, password);
+    if (!user) {
+      return response.unauthorized({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+    const token = await User.authTokens.create(user, ["*"], {
+      expiresIn: "30 days",
+      name: "login",
+    });
+    return response.ok({
+      success: true,
+      message: "Login successful",
+      data: {
+        ...user.serialize(),
+        token: token.toJSON(),
+      },
+    });
   }
 
-  public async login({}: HttpContext) {
-    // const { email, password } = await request.validateUsing(loginValidator)
-    // const nextPath = request.input('next')
-    // try {
-    //   const user = await User.verifyCredentials(email, password)
-    //   await auth.use('web').login(user)
-    //   if (nextPath) return response.redirect().toPath(nextPath)
-    //   return response.redirect().toRoute('/dashboard')
-    // } catch (error) {
-    //   session.flash('errors.email', 'Invalid email or password')
-    //   let backPath = '/login'
-    //   if (nextPath) backPath += '?next=' + nextPath
-    //   return response.redirect().toPath(backPath)
-    // }
+  public async logout({}: HttpContext) {
+    //todo)) implement logout
   }
 
-  public async logout({ response }: HttpContext) {
-    // await auth.use('web').logout()
-    return response.redirect('/login')
-  }
+  public async signup({ request, response }: HttpContext) {
+    const payload = await request.validateUsing(signUpValidator);
 
-  public async showSignup({}: HttpContext) {
-    // return inertia.render('auth/signup')
-  }
+    const userAlreadyExists = await User.findBy("email", payload.email);
+    if (userAlreadyExists !== null) {
+      return response.conflict({ success: false, message: "Please login!!" });
+    }
 
-  public async signup({ response }: HttpContext) {
-    // const payload = await request.validateUsing(signUpValidator)
-
-    // const userAlreadyExists = await User.findBy('email', payload.email)
-    // if (userAlreadyExists !== null) {
-    //   session.flash('errors.email', 'Please login with your existing account')
-    //   return response.redirect().back()
-    // }
-
-    // const user = await User.create(payload)
-    // await auth.use('web').login(user)
-
-    return response.redirect().toRoute('/')
+    const user = await User.create(payload);
+    const token = await User.authTokens.create(user, ["*"], {
+      expiresIn: "30 days",
+      name: "signup",
+    });
+    return response.created({
+      success: true,
+      message: "Signup successful",
+      data: {
+        ...user.serialize(),
+        token: token.toJSON(),
+      },
+    });
   }
 }

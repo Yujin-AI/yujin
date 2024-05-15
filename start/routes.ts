@@ -7,12 +7,23 @@
 |
 */
 
+// todo))
+/*
+ * All the todo
+ * 1. Remove all the inertia and frontend related code
+ * 2. Edit the old implementation of the features to api based
+ * 3. Typesense to MeiliSearch
+ * 4. Improve the jobs
+ *  - Shopify, Articles, Embedding & Indexing
+ * 5.
+ */
+
 import router from '@adonisjs/core/services/router'
 
 const ArticlesController = () => import('#controllers/articles_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const ChatbotController = () => import('#controllers/chatbot_controller')
-// const DashboardController = () => import('#controllers/dashboard_controller')
+const DashboardController = () => import('#controllers/dashboard_controller')
 
 import { middleware } from './kernel.js'
 
@@ -27,32 +38,23 @@ router.get('/', async ({ response }) => {
 */
 router
   .group(() => {
-    router.get('signup', [AuthController, 'showSignup']).as('signup')
-    router.get('login', [AuthController, 'showLogin']).as('login')
+    router.post('/signup', [AuthController, 'signup']).as('signup')
+    router.post('/login', [AuthController, 'login']).as('login')
+    router.post('/logout', [AuthController, 'logout']).as('logout').use(middleware.auth())
   })
-  .use(middleware.guest())
-
-router.post('logout', [AuthController, 'logout']).use(middleware.auth())
-
-router
-  .group(() => {
-    router.post('signup', [AuthController, 'signup'])
-    router.post('login', [AuthController, 'login'])
-  })
-  .prefix('auth')
-  .use(middleware.guest())
+  .prefix('api/auth')
 
 /*
 |--------------------------------------------------------------------------
 | Dashboard routes
 |--------------------------------------------------------------------------
 */
-router.get('dashboard', [DashboardController, 'dashboard']).as('dashboard').use(middleware.auth())
+// router.get('dashboard', [DashboardController, 'dashboard']).as('dashboard').use(middleware.auth())
 
-router
-  .get(':chatbotSlug/dashboard', [DashboardController, 'showDashboard'])
-  .as('dashboard.show')
-  .use(middleware.auth())
+// router
+//   .get(':chatbotSlug/dashboard', [DashboardController, 'showDashboard'])
+//   .as('dashboard.show')
+//   .use(middleware.auth())
 
 /*
 |--------------------------------------------------------------------------
@@ -67,18 +69,19 @@ router
     router.delete('chatbots/:chatbotSlug', [ChatbotController, 'delete'])
   })
   .use(middleware.auth())
+  .prefix('api')
 
 /*
 |--------------------------------------------------------------------------
 | Article routes
 |--------------------------------------------------------------------------
 */
-router
-  .get(':chatbotSlug/articles', [ArticlesController, 'showArticles'])
-  .as('articles.index')
-  .use(middleware.auth())
-router
-  .get(':chatbotSlug/articles/:articleSlug', [ArticlesController, 'showArticle'])
-  .as('articles.show')
-  .use(middleware.auth())
-router.get('api/:chatbotSlug/articles', [ArticlesController, 'apiArticles']).use(middleware.auth())
+// router
+//   .get(':chatbotSlug/articles', [ArticlesController, 'showArticles'])
+//   .as('articles.index')
+//   .use(middleware.auth())
+// router
+//   .get(':chatbotSlug/articles/:articleSlug', [ArticlesController, 'showArticle'])
+//   .as('articles.show')
+//   .use(middleware.auth())
+// router.get('api/:chatbotSlug/articles', [ArticlesController, 'apiArticles']).use(middleware.auth())
