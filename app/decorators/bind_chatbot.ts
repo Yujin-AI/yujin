@@ -3,7 +3,7 @@ import logger from '@adonisjs/core/services/logger'
 
 import Chatbot from '#models/chatbot'
 
-export default function bindChatbot(_target: any, _key: any, descriptor: PropertyDescriptor) {
+const bindChatbot = () => (_target: any, _key: any, descriptor: PropertyDescriptor) => {
   const originalMethod = descriptor.value
 
   descriptor.value = async function (this: any, ctx: HttpContext) {
@@ -23,3 +23,5 @@ export default function bindChatbot(_target: any, _key: any, descriptor: Propert
   }
   return descriptor
 }
+
+export default bindChatbot

@@ -82,8 +82,8 @@ router
 |--------------------------------------------------------------------------
 | Article routes
 |--------------------------------------------------------------------------
-*/ // todo)) manual create articles, update, delete, get all, get one article
-router
+*/
+router // Public routes
   .group(() => {
     router
       .resource('articles', ArticlesController)
@@ -93,7 +93,7 @@ router
       .use('show', middleware.articleOwnership())
   })
   .prefix('api/:chatbotSlug')
-router
+router // Protected routes
   .group(() => {
     router
       .resource('articles', ArticlesController)
