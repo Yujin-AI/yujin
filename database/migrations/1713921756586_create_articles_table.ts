@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.uuid('id').primary().defaultTo(this.db.rawQuery('gen_random_uuid()').knexQuery)
       table.string('title').notNullable()
       table.text('content').nullable()
-      table.string('source_url').notNullable()
+      table.string('source_url').nullable()
       table.uuid('chatbot_id').notNullable().references('chatbots.id').onDelete('CASCADE')
 
       table
@@ -28,7 +28,7 @@ export default class extends BaseSchema {
           existingType: false,
         })
         .notNullable()
-        .defaultTo(ArticleCrawlStatus.PENDING)
+        .defaultTo(ArticleCrawlStatus.SUCCESS)
       table
         .enum('index_status', Object.values(ArticleIndexStatus), {
           enumName: 'article_index_status_enum',
@@ -40,9 +40,9 @@ export default class extends BaseSchema {
 
       table.string('error').nullable()
       table.integer('content_length').nullable()
-      table.boolean('is_processed').notNullable().defaultTo(true)
+      table.boolean('is_processed').notNullable().defaultTo(true) //should bot be trained with this data
       table.string('slug').notNullable().unique()
-      table.boolean('is_published').notNullable().defaultTo(true)
+      table.boolean('is_published').notNullable().defaultTo(true) // should this article be published and indexed
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

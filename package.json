@@ -33,6 +33,7 @@
     "#abilities/*": "./app/abilities/*.js",
     "#lib/*": "./app/lib/*.js",
     "#jobs/*": "./app/jobs/*.js",
+    "#decorators/*": "./app/decorators/*.js",
     "#provider": "./providers/*.js",
     "#database/*": "./database/*.js",
     "#tests/*": "./tests/*.js",

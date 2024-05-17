@@ -3,6 +3,7 @@ import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
+import { isUUID } from '#lib/utils'
 import { BaseModel, afterDelete, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import Article from './article.js'
 import User from './user.js'
@@ -78,13 +79,16 @@ export default class Chatbot extends BaseModel {
     // console.log('DONE')
   }
 
-  static getChatbotBySlugOrId(chatbotSlug: string) {
-    const isUUID = chatbotSlug.match(
-      /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
-    )
-    return isUUID
-      ? Chatbot.query().where('id', chatbotSlug).first()
-      : Chatbot.query().where('slug', chatbotSlug).first()
+  static getChatbotBySlugOrId(slugOrId: string) {
+    return isUUID(slugOrId)
+      ? Chatbot.query().where('id', slugOrId).first()
+      : Chatbot.query().where('slug', slugOrId).first()
+  }
+
+  async validateArticleOwnership(articleId: string) {
+    const article = await Article.getArticleBySlugOrId(articleId)
+    if (!article) return false
+    return article.chatbotId === this.id
   }
 
   @hasOne(() => User, {
