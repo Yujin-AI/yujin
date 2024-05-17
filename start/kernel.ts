@@ -43,4 +43,6 @@ router.use([
  */
 export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
+  chatbotOwnership: () => import('#middleware/validate_chatbot_ownership'),
+  articleOwnership: () => import('#middleware/validate_article_ownership'),
 })
