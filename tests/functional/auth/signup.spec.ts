@@ -1,7 +1,7 @@
 import db from '@adonisjs/lucid/services/db'
 import { test } from '@japa/runner'
 
-import { UserFactory } from '#database/factories/user_factory'
+import UserFactory from '#database/factories/user_factory'
 import { HttpStatus } from '#lib/enums'
 
 test.group('Auth Signup', (group) => {
