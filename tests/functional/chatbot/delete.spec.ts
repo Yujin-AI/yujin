@@ -1,5 +1,6 @@
-import { UserFactory } from '#database/factories/user_factory'
 import { test } from '@japa/runner'
+
+import UserFactory from '#database/factories/user_factory'
 
 test.group('Chatbot delete', () => {
   test('should delete a chatbot', async ({ client, route }) => {

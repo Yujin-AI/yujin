@@ -15,11 +15,12 @@ import type { Config } from '@japa/runner/types'
  * Learn more - https://japa.dev/docs/runner-config#plugins-optional
  */
 export const plugins: Config['plugins'] = [
-  assert({
-    // openApi: {
-    //   schemas: [app.makePath('resources/open_api_schema.yaml')],
-    // },
-  }),
+  assert(),
+  //   {
+  //   openApi: {
+  //     schemas: [app.makePath('resources/open_api_schema.yaml')],
+  //   },
+  // }
   apiClient(),
   pluginAdonisJS(app),
   authApiClient(app),
