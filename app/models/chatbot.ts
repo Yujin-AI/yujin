@@ -73,6 +73,7 @@ export default class Chatbot extends BaseModel {
 
   @afterDelete() //todo))
   static async deleteArticlesIndexes(chatbot: Chatbot) {
+    console.log(chatbot)
     // console.log('Deleing all the articles indexes for chatbot', chatbot.id)
     // const typesense = new TypesenseService()
     // await typesense.deleteDocumentsByChatbotId(chatbot.id)
