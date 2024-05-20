@@ -5,7 +5,7 @@ export const signUpValidator = vine.compile(
     firstName: vine.string().trim().minLength(3).maxLength(50),
     lastName: vine.string().trim().minLength(3).maxLength(50),
     email: vine.string().email().trim().normalizeEmail(),
-    password: vine.string().minLength(8).trim(),
+    password: vine.string().minLength(8).confirmed({ confirmationField: 'confirmPassword' }).trim(),
   })
 )
 
