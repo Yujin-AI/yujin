@@ -32,10 +32,11 @@ test.group('Auth Signup', (group) => {
 
   test('should sign up a user', async ({ client, route }) => {
     const response = await client.post(route('signup')).json({
-      email: 'example@test.com',
-      password: 'password',
       firstName: 'John',
       lastName: 'Doe',
+      email: 'example@test.com',
+      password: 'password',
+      confirmPassword: 'password',
     })
     response.assertStatus(HttpStatus.CREATED)
     // todo)) use open api to assert response
@@ -44,10 +45,11 @@ test.group('Auth Signup', (group) => {
   test('should not sign up a user with existing email', async ({ client, route }) => {
     const user = await UserFactory.create()
     const response = await client.post(route('signup')).json({
-      email: user.email,
-      password: 'password',
       firstName: 'John',
       lastName: 'Doe',
+      email: user.email,
+      password: 'password',
+      confirmPassword: 'password',
     })
     response.assertStatus(HttpStatus.CONFLICT)
     // todo)) use open api to assert response
