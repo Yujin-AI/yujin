@@ -2,6 +2,7 @@ import { HttpStatus } from '#lib/enums'
 import { errors as authErrors } from '@adonisjs/auth'
 import { ExceptionHandler, HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
+import { errors as validationErrors } from '@vinejs/vine'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -20,6 +21,13 @@ export default class HttpExceptionHandler extends ExceptionHandler {
         .status(HttpStatus.UNAUTHORIZED)
         .json({ success: false, message: error.getResponseMessage(error, ctx) })
     }
+
+    if (error instanceof validationErrors.E_VALIDATION_ERROR) {
+      return ctx.response
+        .status(HttpStatus.UNPROCESSABLE_ENTITY)
+        .json({ success: false, message: error.messages })
+    }
+
     return super.handle(error, ctx)
   }
 
