@@ -1,8 +1,9 @@
 import { HttpContext } from '@adonisjs/core/http'
 
+import bindChatbot from '#decorators/bind_chatbot'
 import Chatbot from '#models/chatbot'
 import User from '#models/user'
-import { createChatbotValidator, selectChatbotValidator } from '#validators/chatbot_validator'
+import { createChatbotValidator } from '#validators/chatbot_validator'
 
 export default class ChatbotController {
   public async index({ auth, response }: HttpContext) {
@@ -12,9 +13,8 @@ export default class ChatbotController {
     return response.ok({ success: true, data: user.ownedChatbots })
   }
 
-  public async show({ params, response }: HttpContext) {
-    const chatbot = await Chatbot.getChatbotBySlugOrId(params.chatbotSlug)
-
+  @bindChatbot()
+  public async show({ response }: HttpContext, chatbot: Chatbot) {
     return response.ok({ success: true, data: chatbot })
   }
 
@@ -37,10 +37,9 @@ export default class ChatbotController {
     })
   }
 
-  public async selectChatbot({ request, response, auth }: HttpContext) {
-    const { chatbotSlug } = await request.validateUsing(selectChatbotValidator)
+  @bindChatbot()
+  public async selectChatbot({ response, auth }: HttpContext, chatbot: Chatbot) {
     const user = auth.user as User
-    const chatbot = await Chatbot.getChatbotBySlugOrId(chatbotSlug)
 
     user.defaultChatbotId = chatbot?.id ?? null
     await user.save()
@@ -52,10 +51,18 @@ export default class ChatbotController {
     })
   }
 
-  public async delete({ params, response }: HttpContext) {
-    const chatbot = await Chatbot.getChatbotBySlugOrId(params.chatbotSlug)
+  @bindChatbot()
+  public async update({ response }: HttpContext, chatbot: Chatbot) {
+    //todo)) add validation
+    // const payload = request.all()
+    // chatbot.merge(payload).save()
 
-    await chatbot?.delete()
+    return response.ok({ success: true, data: chatbot })
+  }
+
+  @bindChatbot()
+  public async destroy({ response }: HttpContext, chatbot: Chatbot) {
+    await chatbot.delete()
 
     return response.json({ success: true, message: 'Chatbot deleted successfully' })
   }

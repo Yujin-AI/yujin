@@ -12,7 +12,7 @@ test.group('Chatbot delete', () => {
     })
 
     const response = await client
-      .delete(route('chatbots.delete', { chatbotSlug: chatbot.slug }))
+      .delete(route('chatbots.destroy', { chatbotSlug: chatbot.slug }))
       .loginAs(user)
 
     response.assertStatus(200)
@@ -23,7 +23,7 @@ test.group('Chatbot delete', () => {
   })
 
   test('should not delete a chatbot if user is not authenticated', async ({ client, route }) => {
-    const response = await client.delete(route('chatbots.delete', { chatbotSlug: 'test-chatbot' }))
+    const response = await client.delete(route('chatbots.destroy', { chatbotSlug: 'test-chatbot' }))
 
     response.assertStatus(401)
   })
@@ -32,7 +32,7 @@ test.group('Chatbot delete', () => {
     const user = await UserFactory.create()
 
     const response = await client
-      .delete(route('chatbots.delete', { chatbotSlug: 'test-chatbot' }))
+      .delete(route('chatbots.destroy', { chatbotSlug: 'test-chatbot' }))
       .loginAs(user)
 
     response.assertStatus(404)

@@ -11,9 +11,9 @@ test.group('Chatbot select', () => {
       creatorId: user.id,
     })
 
-    const response = await client.put(route('chatbots.select')).loginAs(user).json({
-      chatbotSlug: chatbot.slug,
-    })
+    const response = await client
+      .put(route('chatbots.select', { chatbotSlug: chatbot.slug }))
+      .loginAs(user)
 
     response.assertStatus(200)
     response.assertBodyContains({
@@ -33,9 +33,9 @@ test.group('Chatbot select', () => {
       creatorId: user.id,
     })
 
-    const response = await client.put(route('chatbots.select')).loginAs(user).json({
-      chatbotSlug: chatbot.id,
-    })
+    const response = await client
+      .put(route('chatbots.select', { chatbotSlug: chatbot.id }))
+      .loginAs(user)
 
     response.assertStatus(200)
     response.assertBodyContains({
@@ -48,9 +48,7 @@ test.group('Chatbot select', () => {
   })
 
   test('should not select a chatbot if user is not authenticated', async ({ client, route }) => {
-    const response = await client.put(route('chatbots.select')).json({
-      chatbotSlug: 'test-chatbot',
-    })
+    const response = await client.put(route('chatbots.select', { chatbotSlug: 'test-chatbot' }))
 
     response.assertStatus(401)
   })
@@ -58,9 +56,9 @@ test.group('Chatbot select', () => {
   test('should not select a chatbot if chatbot does not exist', async ({ client, route }) => {
     const user = await UserFactory.create()
 
-    const response = await client.put(route('chatbots.select')).loginAs(user).json({
-      chatbotSlug: 'test-chatbot',
-    })
+    const response = await client
+      .put(route('chatbots.select', { chatbotSlug: 'test-chatbot' }))
+      .loginAs(user)
 
     response.assertStatus(404)
     response.assertBodyContains({

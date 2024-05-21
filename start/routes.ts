@@ -61,22 +61,23 @@ router
 | Chatbot routes
 |--------------------------------------------------------------------------
 */
+
 router
   .group(() => {
-    router.get('chatbots', [ChatbotController, 'index']).as('chatbots.index')
-    router.post('chatbots', [ChatbotController, 'store']).as('chatbots.store')
-
-    // todo)) add these routes as resource and add update chatbot route
+    //todo)) add update route
     router
-      .group(() => {
-        router.get('chatbots/:chatbotSlug', [ChatbotController, 'show']).as('chatbots.show')
-        router.put('chatbots/select', [ChatbotController, 'selectChatbot']).as('chatbots.select')
-        router.delete('chatbots/:chatbotSlug', [ChatbotController, 'delete']).as('chatbots.delete')
-      })
+      .resource('chatbots', ChatbotController)
+      .apiOnly()
+      .params({ chatbots: 'chatbotSlug' })
+      .use(['destroy', 'show', 'update'], middleware.chatbotOwnership())
+
+    router
+      .put('chatbots/:chatbotSlug/select', [ChatbotController, 'selectChatbot'])
+      .as('chatbots.select')
       .use(middleware.chatbotOwnership())
   })
-  .use(middleware.auth())
   .prefix('api')
+  .use([middleware.auth()])
 
 /*
 |--------------------------------------------------------------------------

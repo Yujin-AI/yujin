@@ -16,7 +16,10 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
-    if (error instanceof authErrors.E_INVALID_CREDENTIALS) {
+    if (
+      error instanceof authErrors.E_INVALID_CREDENTIALS ||
+      error instanceof authErrors.E_UNAUTHORIZED_ACCESS
+    ) {
       return ctx.response
         .status(HttpStatus.UNAUTHORIZED)
         .json({ success: false, message: error.getResponseMessage(error, ctx) })

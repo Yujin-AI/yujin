@@ -1,5 +1,6 @@
 import { HttpContext } from '@adonisjs/core/http'
 import logger from '@adonisjs/core/services/logger'
+import { errors as validationErrors } from '@vinejs/vine'
 
 import Chatbot from '#models/chatbot'
 
@@ -8,8 +9,12 @@ const bindChatbot = () => (_target: any, _key: any, descriptor: PropertyDescript
 
   descriptor.value = async function (this: any, ctx: HttpContext) {
     const { params, response, request } = ctx
+
     const chatbotIdOrSlug =
       params.chatbotSlug || request.input('chatbotSlug') || request.all().chatbotSlug
+    if (!chatbotIdOrSlug) {
+      throw new validationErrors.E_VALIDATION_ERROR('chatbot ID or slug is required.')
+    }
     try {
       const chatbot = await Chatbot.getChatbotBySlugOrId(chatbotIdOrSlug)
       if (!chatbot) {
