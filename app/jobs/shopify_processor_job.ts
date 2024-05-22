@@ -78,9 +78,6 @@ export default class ShopifyProcessorJob extends BaseJob {
         // todo)) emit event
         return
       }
-      // run normal crawler for html
-
-      // Add first URL to the queue and start the crawl.
     } catch (error) {
       console.error(error)
     }

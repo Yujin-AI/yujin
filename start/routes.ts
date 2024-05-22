@@ -10,7 +10,7 @@
 // todo))
 /*
  * All the todo
- * 1. Remove all the inertia and frontend related code
+ * 1. Remove all the inertia and frontend related code -- [info] DONE
  * 2. Edit the old implementation of the features to api based
  * 3. Typesense to MeiliSearch
  * 4. Improve the jobs
@@ -27,9 +27,13 @@ const ChatbotController = () => import('#controllers/chatbot_controller')
 
 import { middleware } from './kernel.js'
 
-router.get('/', async ({ response }) => {
-  response.send({ message: 'Hello world' })
-})
+router
+  .get('api/auth/me', async ({ response, auth }) => {
+    const user = auth.user
+    await user?.load('ownedChatbots')
+    response.ok({ success: true, data: user })
+  })
+  .use(middleware.auth())
 
 /*
 |--------------------------------------------------------------------------
@@ -61,7 +65,6 @@ router
 | Chatbot routes
 |--------------------------------------------------------------------------
 */
-
 router
   .group(() => {
     //todo)) add update route
