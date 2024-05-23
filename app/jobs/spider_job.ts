@@ -1,13 +1,11 @@
 import { BaseJob } from 'adonis-resque'
 import { PlaywrightCrawler, RequestQueue } from 'crawlee'
 
-import { ShopifyStoreJSON } from '#lib/types'
 import { SpiderJobValidator } from '#validators/spider_job_validator'
 
-import { ArticleCrawlStatus } from '#lib/enums'
 import { extractMDFromHTML, getToken, removeQueryParams, removeTrailingSlash } from '#lib/utils'
 import Article from '#models/article'
-import ShopifyProcessorJob from './shopify_processor_job.js'
+import env from '#start/env'
 
 interface SpiderJobPayload {
   url: string
@@ -16,12 +14,6 @@ interface SpiderJobPayload {
 
 export default class SpiderJob extends BaseJob {
   queueName = 'spider'
-
-  private async isShopify(url: string) {
-    const shopifyURL = url + '/products.json?limit=1000'
-    let response = await fetch(shopifyURL)
-    return response.status === 200
-  }
 
   private async crawl(payload: SpiderJobPayload, queue: RequestQueue) {
     const { url } = payload
@@ -42,39 +34,36 @@ export default class SpiderJob extends BaseJob {
     console.log('Spider Job with payload: ', payload)
     const { url, chatbotId } = payload
 
-    const isShopify = await this.isShopify(url)
-    if (isShopify) {
-      console.log('Shopify store detected')
-      const response = await fetch(url + '/products.json?limit=1000')
-      const products = (await response.json()) as unknown as ShopifyStoreJSON
-      products.products.forEach(async (product) => {
-        const productURL = `${url}/products/${product.handle}.json`
-        await ShopifyProcessorJob.enqueue({ url: productURL, chatbotId })
-      })
-      return
-    }
-
     const urlHostname = new URL(url).hostname
     const urlQueue = await RequestQueue.open(urlHostname)
 
     try {
       const data = await SpiderJobValidator.validate(payload)
       await this.crawl(data, urlQueue)
+      const { totalRequestCount, handledRequestCount, pendingRequestCount } =
+        (await urlQueue.getInfo()) ?? {}
       console.log('Crawling URLs completed: ', {
         url: payload.url,
-        estimatedCount: urlQueue.getTotalCount(),
+        totalRequestCount,
+        handledRequestCount,
+        pendingRequestCount,
       })
       const articleCrawler = new PlaywrightCrawler({
         requestQueue: urlQueue,
-        maxConcurrency: 10,
+        maxConcurrency: env.get('MAX_CRAWLING_CONCURRENCY', 10),
+        // minConcurrency: 5,
         retryOnBlocked: true,
         async requestHandler({ request, page, log }) {
           const url = request.loadedUrl || request.url
+          const title = await page.title()
+          if (!title) {
+            log.info('No title found for: ' + url)
+            return
+          }
           const formattedURL = removeTrailingSlash(removeQueryParams(url))
           const existingArticle = await Article.query()
             .where('sourceUrl', formattedURL)
             .andWhere('chatbotId', chatbotId)
-            .andWhere('crawlStatus', ArticleCrawlStatus.SUCCESS)
             .first()
 
           if (existingArticle) {
@@ -87,21 +76,25 @@ export default class SpiderJob extends BaseJob {
 
           const html = await page.content()
 
-          log.info('Scrapping:' + { url: formattedURL, chatbotId })
+          log.info('Scrapping:' + JSON.stringify({ url: formattedURL, chatbotId }, null, 2))
           const markdown = await extractMDFromHTML(html)
           const contentLength = getToken(markdown).length
           await Article.create({
-            title: await page.title(),
+            title: title,
             content: markdown,
             sourceUrl: formattedURL,
             chatbotId,
             contentLength,
-            crawlStatus: ArticleCrawlStatus.SUCCESS,
           })
         },
       })
 
-      await articleCrawler.run()
+      const result = await articleCrawler.run()
+      const queue = await urlQueue.client.get()
+      console.log('Queue:', queue)
+      await urlQueue.drop()
+      console.log('Crawling completed: ', result)
+      return result
     } catch (error) {
       console.error(error)
     }

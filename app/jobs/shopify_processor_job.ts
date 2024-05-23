@@ -1,11 +1,11 @@
 import { BaseJob } from 'adonis-resque'
 
 import { ShopifyScrapePrompt } from '#lib/constants'
-import { ArticleCrawlStatus } from '#lib/enums'
 import { getToken } from '#lib/utils'
 import Article from '#models/article'
 import OpenAIService from '#services/open_ai_service'
 import env from '#start/env'
+import logger from '@adonisjs/core/services/logger'
 
 interface ShopifyProcessorJobPayload {
   url: string
@@ -29,18 +29,16 @@ export default class ShopifyProcessorJob extends BaseJob {
       const { url, chatbotId } = payload
       if (url.endsWith('.json')) {
         const productURL = url.split('.json')[0]
-        console.log('Scraping product: ', { url: productURL, chatbotId })
 
         const response = await fetch(url)
 
         const existingArticle = await Article.query()
           .where('sourceUrl', productURL)
           .andWhere('chatbotId', chatbotId)
-          .andWhere('crawlStatus', ArticleCrawlStatus.SUCCESS)
           .first()
 
         if (existingArticle) {
-          console.log(
+          logger.info(
             'Article already exists for  ',
             JSON.stringify({ url: productURL, chatbotId }, null, 2)
           )
@@ -49,8 +47,10 @@ export default class ShopifyProcessorJob extends BaseJob {
 
         const { product } = (await response.json()) as unknown as any //todo)) add proper typing
         const { title, ...info } = product
-
-        console.log('Scrapping: ', JSON.stringify({ url: productURL, title }))
+        logger.info(
+          'Scraping product: ',
+          JSON.stringify({ url: productURL, chatbotId, title }, null, 2)
+        )
 
         const ans = await this.aiService.ask([
           {
@@ -73,14 +73,10 @@ export default class ShopifyProcessorJob extends BaseJob {
           sourceUrl: productURL,
           chatbotId,
           contentLength,
-          crawlStatus: ArticleCrawlStatus.SUCCESS,
         })
         // todo)) emit event
         return
       }
-      // run normal crawler for html
-
-      // Add first URL to the queue and start the crawl.
     } catch (error) {
       console.error(error)
     }

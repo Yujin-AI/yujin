@@ -14,10 +14,12 @@
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "prepare": "playwright install",
     "typecheck": "tsc --noEmit",
     "depcheck": "depcheck",
     "job:spider": "node ace resque:start --schedule=false --worker --is-multi --queue-name=spider",
     "job:shopify": "node ace resque:start --schedule=false --worker --is-multi --queue-name=shopify_processor",
+    "job:rest": "node ace resque:start --schedule=false --worker --is-multi --queue-name=embedding_articles --queue-name=url_processor",
     "job:scheduler": "node ace resque:start --schedule --worker=false"
   },
   "imports": {
@@ -72,7 +74,7 @@
     "@adonisjs/redis": "^8.0.1",
     "@dqbd/tiktoken": "1.0.15",
     "@vinejs/vine": "^2.0.0",
-    "adonis-autoswagger": "^3.22.0",
+    "adonis-autoswagger": "^3.26.0",
     "adonis-resque": "1.2.2",
     "cheerio": "1.0.0-rc.12",
     "crawlee": "3.9.2",

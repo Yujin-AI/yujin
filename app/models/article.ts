@@ -1,10 +1,19 @@
 import string from '@adonisjs/core/helpers/string'
-import { BaseModel, beforeCreate, belongsTo, column } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  afterDelete,
+  afterSave,
+  beforeCreate,
+  belongsTo,
+  column,
+} from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
-import { ArticleCrawlStatus, ArticleIndexStatus, ArticleSourceType } from '#lib/enums'
+import EmbeddingArticlesJob from '#jobs/embedding_articles_job'
+import { ArticleSourceType } from '#lib/enums'
 import { isUUID } from '#lib/utils'
+import app from '@adonisjs/core/services/app'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Chatbot from './chatbot.js'
 
@@ -29,30 +38,19 @@ export default class Article extends BaseModel {
   @column()
   declare sourceType: ArticleSourceType
 
-  /*
-   * todo)) probably this and the next column should be
-   * removed as we are not creating articles if it is not crawled.
-   * And indexes happens after the article is created in a queue.
-   */
-  @column()
-  declare crawlStatus: ArticleCrawlStatus
-
-  @column()
-  declare indexStatus: ArticleIndexStatus
-
   @column()
   declare error: string
 
   @column()
   declare contentLength?: number
 
-  @column()
+  @column() // will it be used to train bot
   declare isProcessed: boolean
 
   @column()
   declare slug: string
 
-  @column()
+  @column() // is it published publicly
   declare isPublished: boolean
 
   @column.dateTime({ autoCreate: true })
@@ -71,6 +69,7 @@ export default class Article extends BaseModel {
       lower: true,
       replacement: '-',
       strict: true,
+      remove: /[|]/g,
     })
 
     const rows = await Article.query()
@@ -97,35 +96,16 @@ export default class Article extends BaseModel {
     article.slug = incrementor.length ? `${slug}-${Math.max(...incrementor) + 1}` : slug
   }
 
-  //todo)) in job queue
-  // @afterSave()
-  // static async updateEmbeddingAndIndex(article: Article) {
-  //   const typesense = new TypesenseService()
+  @afterSave()
+  static async updateEmbeddingAndIndex(article: Article) {
+    await EmbeddingArticlesJob.enqueue({ articleId: article.id })
+  }
 
-  //   await typesense.upsertDocument({
-  //     id: article.id,
-  //     title: article.title,
-  //     content: article.content,
-  //     sourceUrl: article.sourceUrl,
-  //     chatbotId: article.chatbotId,
-  //     createdAt: article.createdAt.toMillis(),
-  //     updatedAt: article.updatedAt.toMillis(),
-  //   })
-
-  //   // update the index status
-  //   article.indexStatus = ArticleIndexStatus.SUCCESS
-  //   await article.save()
-  // }
-
-  // todo)) in job queue
-  // @afterDelete()
-  // static async deleteFromIndex(article: Article) {
-  //   console.log('Deleting article from index', article.id)
-  //   const typesense = new TypesenseService()
-
-  //   const data = await typesense.deleteDocument(article.id)
-  //   console.log('Deleted article from index', data)
-  // }
+  @afterDelete()
+  static async deleteFromIndex(article: Article) {
+    const typesense = await app.container.make('typesense')
+    await typesense.collections('articles').documents(article.id).delete()
+  }
 
   @belongsTo(() => Chatbot)
   declare chatbot: BelongsTo<typeof Chatbot>

@@ -1,6 +1,7 @@
 import { HttpContext } from '@adonisjs/core/http'
 
 import bindChatbot from '#decorators/bind_chatbot'
+import URLProcessorJob from '#jobs/url_processor_job'
 import Chatbot from '#models/chatbot'
 import User from '#models/user'
 import { createChatbotValidator } from '#validators/chatbot_validator'
@@ -27,8 +28,7 @@ export default class ChatbotController {
     })
     await chatbot.save()
 
-    //todo)) add dispatch job
-    // await SpiderJob.enqueue({ chatbotId: chatbot.id, url: payload.url })
+    await URLProcessorJob.enqueue({ chatbotId: chatbot.id, url: payload.url })
 
     return response.created({
       success: true,

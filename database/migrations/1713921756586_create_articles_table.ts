@@ -1,6 +1,6 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
-import { ArticleCrawlStatus, ArticleIndexStatus, ArticleSourceType } from '#lib/enums'
+import { ArticleSourceType } from '#lib/enums'
 
 export default class extends BaseSchema {
   protected tableName = 'articles'
@@ -21,22 +21,6 @@ export default class extends BaseSchema {
         })
         .notNullable()
         .defaultTo(ArticleSourceType.SPIDER)
-      table
-        .enum('crawl_status', Object.values(ArticleCrawlStatus), {
-          enumName: 'article_crawl_status_enum',
-          useNative: true,
-          existingType: false,
-        })
-        .notNullable()
-        .defaultTo(ArticleCrawlStatus.SUCCESS)
-      table
-        .enum('index_status', Object.values(ArticleIndexStatus), {
-          enumName: 'article_index_status_enum',
-          useNative: true,
-          existingType: false,
-        })
-        .notNullable()
-        .defaultTo(ArticleIndexStatus.QUEUED)
 
       table.string('error').nullable()
       table.integer('content_length').nullable()
@@ -51,8 +35,6 @@ export default class extends BaseSchema {
 
   async down() {
     await this.schema.dropTable(this.tableName)
-    await this.schema.raw('DROP TYPE IF EXISTS "article_crawl_status_enum"')
-    await this.schema.raw('DROP TYPE IF EXISTS "article_index_status_enum"')
     await this.schema.raw('DROP TYPE IF EXISTS "article_source_type_enum"')
   }
 }

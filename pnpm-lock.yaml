@@ -30,8 +30,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       adonis-autoswagger:
-        specifier: ^3.22.0
-        version: 3.22.0
+        specifier: ^3.26.0
+        version: 3.26.0
       adonis-resque:
         specifier: 1.2.2
         version: 1.2.2(@adonisjs/core@6.9.0(@adonisjs/assembler@7.5.2(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2))(@adonisjs/redis@8.0.1(@adonisjs/core@6.9.0(@adonisjs/assembler@7.5.2(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2)))
@@ -1057,8 +1057,8 @@ packages:
     resolution: {integrity: sha512-6TVU49mK6KZb4qG6xWaaM4C7sA/sgUMLy/JYMOzkcp3BvVLpW0fXDFQiIzAuxFCt/2+xD7fNIiPFAoLZPhVNLQ==}
     engines: {node: '>=6.0'}
 
-  adonis-autoswagger@3.22.0:
-    resolution: {integrity: sha512-6/bR5qv2BtQ9ldU8SyArbajmWJUvFEoFjT6layKA4npgalux40ma4CGbIXM9n7dvlRIQLbv6eXdZigTRqOaULw==}
+  adonis-autoswagger@3.26.0:
+    resolution: {integrity: sha512-6kDr5PNmWTdIv0GfSguQliye3QQU9AVl19GyC2d0tIbT3XZ/4iEHLAto8LWIjRSgE4B/sVs9oRhsq4E/ApqgvA==}
 
   adonis-resque@1.2.2:
     resolution: {integrity: sha512-6qelCbaWXgeDI8tHIJ0/875TPoMSYSr6ql9Bylb0hhEfYXiTJ0c5A/CIEJUAF+nTK5TTJ93cXaiNAw7rxoZFpQ==}
@@ -5486,7 +5486,7 @@ snapshots:
 
   adm-zip@0.5.12: {}
 
-  adonis-autoswagger@3.22.0:
+  adonis-autoswagger@3.26.0:
     dependencies:
       abstract-syntax-tree: 2.22.0
       change-case: 4.1.2

@@ -4,6 +4,7 @@ import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
 import { isUUID } from '#lib/utils'
+import app from '@adonisjs/core/services/app'
 import { BaseModel, afterDelete, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import Article from './article.js'
 import User from './user.js'
@@ -71,13 +72,13 @@ export default class Chatbot extends BaseModel {
     chatbot.slug = incrementor.length ? `${slug}-${Math.max(...incrementor) + 1}` : slug
   }
 
-  @afterDelete() //todo))
+  @afterDelete()
   static async deleteArticlesIndexes(chatbot: Chatbot) {
-    console.log(chatbot.id.slice(0, 0))
-    // console.log('Deleing all the articles indexes for chatbot', chatbot.id)
-    // const typesense = new TypesenseService()
-    // await typesense.deleteDocumentsByChatbotId(chatbot.id)
-    // console.log('DONE')
+    const typesense = await app.container.make('typesense')
+    await typesense
+      .collections('articles')
+      .documents()
+      .delete({ filter_by: `chatbotId:${chatbot.id}` })
   }
 
   static getChatbotBySlugOrId(slugOrId: string) {
