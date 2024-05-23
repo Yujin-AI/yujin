@@ -38,9 +38,10 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
-  | AI API Key
+  | AI API Keys
   |----------------------------------------------------------
   */
+  // AI_PROVIDER: Env.schema.enum(['groq', 'openai'] as const),
   AI_API_KEY: Env.schema.string(),
 
   /*

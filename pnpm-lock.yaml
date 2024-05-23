@@ -30,8 +30,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       adonis-autoswagger:
-        specifier: ^3.22.0
-        version: 3.22.0
+        specifier: ^3.26.0
+        version: 3.26.0
       adonis-resque:
         specifier: 1.2.2
         version: 1.2.2(@adonisjs/core@6.9.0(@adonisjs/assembler@7.5.2(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2))(@adonisjs/redis@8.0.1(@adonisjs/core@6.9.0(@adonisjs/assembler@7.5.2(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2)))
@@ -44,9 +44,6 @@ importers:
       luxon:
         specifier: ^3.4.4
         version: 3.4.4
-      meilisearch:
-        specifier: 0.40.0
-        version: 0.40.0
       openai:
         specifier: 4.47.1
         version: 4.47.1
@@ -1060,8 +1057,8 @@ packages:
     resolution: {integrity: sha512-6TVU49mK6KZb4qG6xWaaM4C7sA/sgUMLy/JYMOzkcp3BvVLpW0fXDFQiIzAuxFCt/2+xD7fNIiPFAoLZPhVNLQ==}
     engines: {node: '>=6.0'}
 
-  adonis-autoswagger@3.22.0:
-    resolution: {integrity: sha512-6/bR5qv2BtQ9ldU8SyArbajmWJUvFEoFjT6layKA4npgalux40ma4CGbIXM9n7dvlRIQLbv6eXdZigTRqOaULw==}
+  adonis-autoswagger@3.26.0:
+    resolution: {integrity: sha512-6kDr5PNmWTdIv0GfSguQliye3QQU9AVl19GyC2d0tIbT3XZ/4iEHLAto8LWIjRSgE4B/sVs9oRhsq4E/ApqgvA==}
 
   adonis-resque@1.2.2:
     resolution: {integrity: sha512-6qelCbaWXgeDI8tHIJ0/875TPoMSYSr6ql9Bylb0hhEfYXiTJ0c5A/CIEJUAF+nTK5TTJ93cXaiNAw7rxoZFpQ==}
@@ -1531,9 +1528,6 @@ packages:
   croner@8.0.2:
     resolution: {integrity: sha512-HgSdlSUX8mIgDTTiQpWUP4qY4IFRMsduPCYdca34Pelt8MVdxdaDOzreFtCscA6R+cRZd7UbD1CD3uyx6J3X1A==}
     engines: {node: '>=18.0'}
-
-  cross-fetch@3.1.8:
-    resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
 
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -2837,9 +2831,6 @@ packages:
   media-typer@1.1.0:
     resolution: {integrity: sha512-aisnrDP4GNe06UcKFnV5bfMNPBUw4jsLGaWwWfnH3v02GnBuXX2MCVn5RbrWo0j3pczUilYblq7fQ7Nw2t5XKw==}
     engines: {node: '>= 0.8'}
-
-  meilisearch@0.40.0:
-    resolution: {integrity: sha512-BoRhQMr2mBFLEeCfsvPluksGb01IaOiWvV3Deu3iEY+yYJ4jdGTu+IQi5FCjKlNQ7/TMWSN2XUToSgvH1tj0BQ==}
 
   memoize@10.0.0:
     resolution: {integrity: sha512-H6cBLgsi6vMWOcCpvVCdFFnl3kerEXbrYh9q+lY6VXvQSmM6CkmV08VOwT+WE2tzIEqRPFfAq3fm4v/UIW6mSA==}
@@ -5495,7 +5486,7 @@ snapshots:
 
   adm-zip@0.5.12: {}
 
-  adonis-autoswagger@3.22.0:
+  adonis-autoswagger@3.26.0:
     dependencies:
       abstract-syntax-tree: 2.22.0
       change-case: 4.1.2
@@ -6037,12 +6028,6 @@ snapshots:
   create-require@1.1.1: {}
 
   croner@8.0.2: {}
-
-  cross-fetch@3.1.8:
-    dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
 
   cross-spawn@7.0.3:
     dependencies:
@@ -7472,12 +7457,6 @@ snapshots:
   media-typer@0.3.0: {}
 
   media-typer@1.1.0: {}
-
-  meilisearch@0.40.0:
-    dependencies:
-      cross-fetch: 3.1.8
-    transitivePeerDependencies:
-      - encoding
 
   memoize@10.0.0:
     dependencies:
