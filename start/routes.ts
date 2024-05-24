@@ -105,6 +105,7 @@ router // Protected routes
       .except(['index', 'show'])
       .params({ articles: 'articleSlug' })
       .use(['destroy', 'update'], middleware.articleOwnership())
+    router.delete('articles', [ArticlesController, 'massDestroy']).as('articles.massDestroy')
   })
   .prefix('api/:chatbotSlug')
   .use([middleware.auth(), middleware.chatbotOwnership()])
