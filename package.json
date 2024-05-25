@@ -14,7 +14,6 @@
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "prepare": "playwright install",
     "typecheck": "tsc --noEmit",
     "depcheck": "depcheck",
     "job:spider": "node ace resque:start --schedule=false --worker --is-multi --queue-name=spider",

@@ -27,6 +27,8 @@ const ChatbotController = () => import('#controllers/chatbot_controller')
 
 import { middleware } from './kernel.js'
 
+router.get('/', async ({ response }) => response.send('Hello world!'))
+
 router
   .get('api/auth/me', async ({ response, auth }) => {
     const user = auth.user
