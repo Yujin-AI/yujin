@@ -31,9 +31,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare lastName: string | null
 
-  @column()
-  declare defaultChatbotId: string | null
-
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
