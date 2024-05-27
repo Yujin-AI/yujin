@@ -60,10 +60,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   | Constants
   |----------------------------------------------------------
   */
-  MAX_CRAWLING_CONCURRENCY: Env.schema.number(),
-  MAX_CRAWLING_DEPS: Env.schema.number(),
-  CRAWLING_INTERVAL: Env.schema.number(),
-  CRAWLER_TIME_LIMIT: Env.schema.number(),
+  CRAWLER_API: Env.schema.string(),
 
   /*
   |----------------------------------------------------------

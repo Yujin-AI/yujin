@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   redis:
-    container_name: redis
+    container_name: rdis
     image: redis:latest
     ports:
       - '6379:6379'
@@ -41,7 +41,7 @@ services:
     restart: unless-stopped
 
   typesense:
-    container_name: typesense
+    container_name: typesnse
     image: typesense/typesense:26.0
     restart: on-failure
     ports:

@@ -4,6 +4,7 @@ import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
 import { isUUID } from '#lib/utils'
+import env from '#start/env'
 import app from '@adonisjs/core/services/app'
 import { BaseModel, afterDelete, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import Article from './article.js'
@@ -76,7 +77,7 @@ export default class Chatbot extends BaseModel {
   static async deleteArticlesIndexes(chatbot: Chatbot) {
     const typesense = await app.container.make('typesense')
     await typesense
-      .collections('articles')
+      .collections(env.get('TYPESENSE_COLLECTION'))
       .documents()
       .delete({ filter_by: `chatbotId:${chatbot.id}` })
   }

@@ -23,11 +23,8 @@ import router from '@adonisjs/core/services/router'
 const ArticlesController = () => import('#controllers/articles_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const ChatbotController = () => import('#controllers/chatbot_controller')
-// const DashboardController = () => import('#controllers/dashboard_controller')
 
 import { middleware } from './kernel.js'
-
-router.get('/', async ({ response }) => response.send('Hello world!'))
 
 router
   .get('api/auth/me', async ({ response, auth }) => {

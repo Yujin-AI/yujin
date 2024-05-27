@@ -25,5 +25,6 @@
       "#start/*": ["./start/*.js"],
       "#config/*": ["./config/*.js"]
     }
-  }
+  },
+  "exclude": ["crawler"]
 }

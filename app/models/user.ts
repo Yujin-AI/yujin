@@ -2,8 +2,8 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, beforeCreate, belongsTo, column, computed, hasMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, beforeCreate, column, computed, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 import Chatbot from './chatbot.js'
@@ -58,12 +58,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
     foreignKey: 'ownerId',
   })
   declare ownedChatbots: HasMany<typeof Chatbot>
-
-  @belongsTo(() => Chatbot, {
-    foreignKey: 'defaultChatbotId',
-    localKey: 'id',
-  })
-  declare defaultChatbot: BelongsTo<typeof Chatbot>
 
   async validateChatbotOwnership(chatbotId: string) {
     const chatbot = await Chatbot.getChatbotBySlugOrId(chatbotId)
