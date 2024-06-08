@@ -1,98 +1,42 @@
 services:
   server:
     env_file:
-      - ../../.env.production
+      - .env.production
     container_name: server
     build:
-      context: ../../
-      dockerfile: docker/prod/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
       - PORT=3000
       - HOST=0.0.0.0
     command: 'node bin/server.js'
     volumes:
-      - server_data:/app
+      - server_data:/app\
     ports:
       - '3000:3000'
     restart: on-failure
     networks:
       - app-network
     depends_on:
-      - crawler
       - postgres
       - redis
       - typesense
 
-  crawler:
-    container_name: crawler
-    env_file:
-      - ../../crawler/.env
-    build:
-      context: ../../crawler
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
-      - PORT=5656
-    ports:
-      - '5000:5656'
-    volumes:
-      - crawler_data:/crawler
-
   job_spider:
     env_file:
-      - ../../.env.production
+      - .env.production
     container_name: job_spider
     build:
-      context: ../../
-      dockerfile: docker/prod/Dockerfile
-    environment:
-      - NODE_ENV=production
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - TYPESENSE_HOST=typesense
-      - TYPESENSE_PORT=8108
-    command: pnpm job:spider
+      context: .
+      dockerfile: Dockerfile
+    command: npm job:spider
     volumes:
       - job_spider_data:/app
     depends_on:
-      - server
-
-  # job_shopify:
-  #   env_file:
-  #     - ../../.env.production
-  #   container_name: job_shopify
-  #   build:
-  #     context: ../../
-  #     dockerfile: docker/prod/Dockerfile
-  #   environment:
-  #     - NODE_ENV=production
-  #   command: pnpm job:shopify
-  #   volumes:
-  #     - job_shopify_data:/app
-  #   depends_on:
-  #     - server
-  #     - postgres
-  #     - redis
-
-  # job_rest:
-  #   env_file:
-  #     - ../../.env.production
-  #   container_name: job_rest
-  #   build:
-  #     context: ../../
-  #     dockerfile: docker/prod/Dockerfile
-  #   environment:
-  #     - NODE_ENV=production
-  #   command: pnpm job:rest
-  #   volumes:
-  #     - job_rest_data:/app
-  #   depends_on:
-  #     - server
-  #     - postgres
-  #     - redis
+      - redis
+      - postgres
+      - typesense
 
   postgres:
     container_name: postgres
@@ -165,8 +109,8 @@ services:
 volumes:
   server_data:
   job_spider_data:
-  job_shopify_data:
-  job_rest_data:
+  # job_shopify_data:
+  # job_rest_data:
   postgres_data:
   redis_data:
   typesense_data:

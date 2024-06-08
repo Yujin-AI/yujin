@@ -23,7 +23,6 @@ import router from '@adonisjs/core/services/router'
 const ArticlesController = () => import('#controllers/articles_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const ChatbotController = () => import('#controllers/chatbot_controller')
-// const DashboardController = () => import('#controllers/dashboard_controller')
 
 import { middleware } from './kernel.js'
 

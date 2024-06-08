@@ -23,7 +23,7 @@ export default class EmbeddingArticlesJob extends BaseJob {
 
     const typesense = await app.container.make('typesense')
 
-    await typesense.collections(env.get('TYPESENSE_COLLECTION', 'articles')).documents().upsert({
+    await typesense.collections(env.get('TYPESENSE_COLLECTION')).documents().upsert({
       id: article.id,
       title: article.title,
       content: article.content,

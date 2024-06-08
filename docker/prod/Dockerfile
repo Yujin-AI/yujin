@@ -1,6 +1,7 @@
 FROM node:lts-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+RUN apt-get update && apt-get upgrade
 RUN corepack enable
 RUN corepack prepare pnpm@latest --activate
 RUN mkdir -p /home/node/app && chown node:node /home/node/app
@@ -15,7 +16,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --chown=node:node . .
 
 FROM dependencies AS build
-RUN ls -la
 RUN pnpm build
 
 FROM base AS production
@@ -26,4 +26,3 @@ COPY --chown=node:node ./package*.json ./
 COPY --chown=node:node ./pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --chown=node:node --from=build /home/node/app/build .
-# EXPOSE $PORT

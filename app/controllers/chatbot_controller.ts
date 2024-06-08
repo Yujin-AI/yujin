@@ -37,11 +37,9 @@ export default class ChatbotController {
     })
   }
 
-  @bindChatbot()
-  public async selectChatbot({ response, auth }: HttpContext, chatbot: Chatbot) {
+  public async selectChatbot({ response, auth }: HttpContext) {
     const user = auth.user as User
 
-    user.defaultChatbotId = chatbot?.id ?? null
     await user.save()
 
     return response.json({

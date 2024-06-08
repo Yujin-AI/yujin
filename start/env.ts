@@ -60,10 +60,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   | Constants
   |----------------------------------------------------------
   */
-  MAX_CRAWLING_CONCURRENCY: Env.schema.number(),
-  MAX_CRAWLING_DEPS: Env.schema.number(),
-  CRAWLING_INTERVAL: Env.schema.number(),
-  CRAWLER_TIME_LIMIT: Env.schema.number(),
+  CRAWLER_API: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
@@ -73,13 +70,4 @@ export default await Env.create(new URL('../', import.meta.url), {
   REDIS_HOST: Env.schema.string({ format: 'host' }),
   REDIS_PORT: Env.schema.number(),
   REDIS_PASSWORD: Env.schema.string.optional(),
-
-  /*
-  |----------------------------------------------------------
-  | Meilisearch Config
-  |----------------------------------------------------------
-  */
-  MEILISEARCH_HOST: Env.schema.string({ format: 'url' }),
-  MEILISEARCH_API_KEY: Env.schema.string(),
-  MEILISEARCH_INDEX: Env.schema.string(),
 })

@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: pg_db
+    container_name: pg
     image: postgres
     environment:
       POSTGRES_USER: yujin
@@ -11,7 +11,7 @@ services:
     ports:
       - '5432:5432'
     networks:
-      - postgres
+      - app-network
     restart: unless-stopped
 
   pgadmin:
@@ -26,20 +26,22 @@ services:
     ports:
       - '5050:80'
     networks:
-      - postgres
+      - app-network
     restart: unless-stopped
 
   redis:
-    container_name: redis
+    container_name: rdis
     image: redis:latest
     ports:
       - '6379:6379'
     volumes:
       - redis:/data
+    networks:
+      - app-network
     restart: unless-stopped
 
   typesense:
-    container_name: typesense
+    container_name: typesnse
     image: typesense/typesense:26.0
     restart: on-failure
     ports:
@@ -47,6 +49,8 @@ services:
     volumes:
       - typesense:/data
     command: '--data-dir /data --api-key=xyz --enable-cors'
+    networks:
+      - app-network
 
   resque-web:
     image: appwrite/resque-web
@@ -60,9 +64,12 @@ services:
       - RESQUE_WEB_HTTP_BASIC_AUTH_PASSWORD= # (OPTIONAL - if not set no password used)
     depends_on:
       - redis
+    networks:
+      - app-network
     restart: unless-stopped
+
 networks:
-  postgres:
+  app-network:
     driver: bridge
 
 volumes:
