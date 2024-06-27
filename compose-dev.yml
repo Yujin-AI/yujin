@@ -1,0 +1,84 @@
+version: '3.7'
+services:
+  pg_yujin:
+    container_name: pg-yujin
+    image: postgres
+    environment:
+      POSTGRES_USER: yujin
+      POSTGRES_PASSWORD: yujin
+      POSTGRES_DB: yujin_dev
+      PGDATA: /data/postgres
+    volumes:
+      - pg_yujin:/data/postgres
+    ports:
+      - '5432:5432'
+    networks:
+      - yujin-network
+    restart: unless-stopped
+
+  redis_yujin:
+    container_name: redis-yujin
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_yujin:/data
+    networks:
+      - yujin-network
+    restart: unless-stopped
+
+  typesense_yujin:
+    container_name: typesense-yujin
+    image: typesense/typesense:26.0
+    ports:
+      - '8108:8108'
+    command: "--data-dir /data --api-key=xyz --enable-cors"
+    volumes:
+      - typesense_yujin:/data
+    networks:
+      - yujin-network
+    restart: unless-stopped
+
+  resque_eb:
+    image: appwrite/resque-web
+    container_name: resque-web
+    ports:
+      - '4567:5678'
+    environment:
+      - RESQUE_WEB_HOST=redis-yujin
+      - RESQUE_WEB_PORT=6379
+    depends_on:
+      - redis_yujin
+    networks:
+      - yujin-network
+    restart: unless-stopped
+
+networks:
+  yujin-network:
+    driver: bridge
+
+volumes:
+  pg_yujin:
+  redis_yujin:
+  typesense_yujin:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

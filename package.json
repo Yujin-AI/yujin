@@ -7,10 +7,9 @@
   "scripts": {
     "start": "docker compose -f docker/prod/docker-compose.yml up -d --build",
     "db:setup": "docker compose -f docker/dev/docker-compose.yml up -d",
-    "start:prod": "node ace build && cp ./.env.production ./build && cd build && pnpm i && node bin/server",
+    "start:prod": "node ace build && cp ./.env.production ./build && cd build && pnpm i --prod && node bin/server",
     "build": "node ace build",
     "dev": "node ace serve --hmr",
-    "predev": "pnpm db:setup",
     "test:c8": "c8 node ace test",
     "test": "node ace test",
     "lint": "eslint .",
