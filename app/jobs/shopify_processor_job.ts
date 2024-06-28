@@ -13,13 +13,14 @@ interface ShopifyProcessorJobPayload {
 }
 
 export default class ShopifyProcessorJob extends BaseJob {
+  queueName = 'shopify_processor'
   private aiService: OpenAIService
+
   constructor() {
     super()
+    //todo)) shift to ai provider
     this.aiService = new OpenAIService(env.get('AI_API_KEY'))
   }
-
-  queueName = 'shopify_processor'
 
   /**
    * Base Entry point
@@ -52,7 +53,7 @@ export default class ShopifyProcessorJob extends BaseJob {
           JSON.stringify({ url: productURL, chatbotId, title }, null, 2)
         )
 
-        const ans = await this.aiService.ask([
+        const ans = await this.aiService.askWithContext([
           {
             role: 'system',
             content: ShopifyScrapePrompt.replace('{{title}}', title).replace('{{url}}', productURL),

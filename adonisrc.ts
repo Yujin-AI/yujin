@@ -38,8 +38,9 @@ export default defineConfig({
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/redis/redis_provider'),
     () => import('adonis-resque/providers/resque_provider'),
-    () => import('./providers/open_ai_provider.js'),
     () => import('./providers/typesense_provider.js'),
+    () => import('./providers/crawler_provider.js'),
+    () => import('./providers/ai_provider.js'),
   ],
 
   /*

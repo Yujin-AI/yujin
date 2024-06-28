@@ -3,18 +3,23 @@ import { ChatCompletionChunk } from 'openai/resources/chat/completions'
 import { Stream } from 'openai/streaming'
 
 import { getToken } from '#lib/utils'
+import { ChatContext } from '#lib/types'
 
 export default class OpenAIService {
   private readonly openai: OpenAI
+
   constructor(private readonly apiKey: string) {
     this.openai = new OpenAI({ apiKey: this.apiKey })
   }
 
-  async ask(context: OpenAI.Chat.Completions.ChatCompletionMessageParam[]): Promise<string> {
-    // const token = getToken(JSON.stringify(context)).length
+  async askWithContext(context: ChatContext[]): Promise<string> {
+    const messages = context.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }))
 
     const response = await this.openai.chat.completions.create({
-      messages: context,
+      messages,
       model: 'gpt-4-1106-preview',
       temperature: 0,
     })
@@ -22,6 +27,10 @@ export default class OpenAIService {
     return response.choices[0].message.content ?? ''
   }
 
+  // todo))
+  async ask(_question: string) {}
+
+  // todo))
   async askStream(
     context: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
   ): Promise<Stream<ChatCompletionChunk>> {

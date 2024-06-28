@@ -9,9 +9,13 @@ import { createArticleValidator, updateArticleValidator } from '#validators/arti
 
 export default class ArticlesController {
   @bindChatbot()
-  public async index({ response }: HttpContext, chatbot: Chatbot) {
-    const articles = await Article.query().where('chatbotId', chatbot.id)
-    return response.ok({ success: true, data: articles })
+  public async index({ request, response }: HttpContext, chatbot: Chatbot) {
+    const page = request.input('page', 1)
+    let limit = request.input('limit', 10)
+    limit = limit > 50 ? 50 : limit
+    const articles = await Article.query().where('chatbotId', chatbot.id).paginate(page, limit)
+
+    return response.ok({ success: true, ...articles.toJSON() })
   }
 
   @bindArticle()
@@ -40,7 +44,7 @@ export default class ArticlesController {
   @bindArticle()
   public async update({ response, request }: HttpContext, article: Article) {
     const payload = await request.validateUsing(updateArticleValidator)
-    article.merge(payload).save()
+    await article.merge(payload).save()
     return response.ok({ success: true, data: article })
   }
 
@@ -48,5 +52,12 @@ export default class ArticlesController {
   public async destroy({ response }: HttpContext, article: Article) {
     await article.delete()
     return response.json({ success: true, message: 'Article deleted successfully' })
+  }
+
+  @bindChatbot()
+  public async massDestroy({ request }: HttpContext, chatbot: Chatbot) {
+    const ids = request.input('ids', [])
+    await Article.query().where('chatbotId', chatbot.id).whereIn('id', ids).delete()
+    return { success: true, message: 'Articles deleted successfully' }
   }
 }

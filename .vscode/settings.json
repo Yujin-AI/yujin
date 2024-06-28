@@ -5,6 +5,7 @@
     "apify",
     "autoswagger",
     "bodyparser",
+    "bufferutil",
     "chatbots",
     "clsx",
     "crawlee",
