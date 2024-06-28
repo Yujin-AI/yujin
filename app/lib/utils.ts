@@ -9,20 +9,20 @@ export const removeQueryParams = (value: string) => value.replace(/\?.*$/, '')
 export const getToken = (value: string) => encoding_for_model('gpt-4-1106-preview').encode(value)
 
 export const reformMDUsingAI = async (content: string) => {
-  const gemini = await app.container.make('gemini')
+  const ai = await app.container.make('ai')
 
-  return await gemini.askWithContext([
+  return await ai.askWithContext([
     {
       role: 'user',
-      parts: [{ text: WebScrapeSystemPrompt }],
+      content: WebScrapeSystemPrompt,
     },
     {
-      role: 'model',
-      parts: [{ text: 'Now send me the markdown' }],
+      role: 'system',
+      content: 'Now send me the markdown',
     },
     {
       role: 'user',
-      parts: [{ text: content }],
+      content,
     },
   ])
 }

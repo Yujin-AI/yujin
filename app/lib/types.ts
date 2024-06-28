@@ -83,3 +83,8 @@ export interface CrawlPayload {
   url: string
   chatbotId: string
 }
+
+export interface ChatContext {
+  role: 'user' | 'system'
+  content: string
+}

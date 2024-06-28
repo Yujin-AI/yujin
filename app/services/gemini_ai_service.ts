@@ -1,5 +1,7 @@
 import { Content, GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai'
 
+import { ChatContext } from '#lib/types'
+
 export default class GeminiAIService {
   private readonly gemini: GenerativeModel
 
@@ -9,9 +11,14 @@ export default class GeminiAIService {
     })
   }
 
-  async askWithContext(context: Content[]) {
+  async askWithContext(context: ChatContext[]) {
+    const history: Content[] = context.map((msg) => ({
+      role: msg.role === 'system' ? 'model' : 'user',
+      parts: [{ text: msg.content }],
+    }))
+
     const chat = this.gemini.startChat({
-      history: context,
+      history,
       generationConfig: { temperature: 0 },
     })
 
