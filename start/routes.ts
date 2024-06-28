@@ -19,12 +19,13 @@
  */
 
 import router from '@adonisjs/core/services/router'
+import { middleware } from './kernel.js'
+import env from '#start/env'
 
 const ArticlesController = () => import('#controllers/articles_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const ChatbotController = () => import('#controllers/chatbot_controller')
-
-import { middleware } from './kernel.js'
+const HealChecksController = () => import('#controllers/health_checks_controller')
 
 router
   .get('api/auth/me', async ({ response, auth }) => {
@@ -33,6 +34,19 @@ router
     response.ok({ success: true, data: user })
   })
   .use(middleware.auth())
+
+/*
+|--------------------------------------------------------------------------
+| Health check
+|--------------------------------------------------------------------------
+*/
+router
+  .get('health', [HealChecksController])
+  .use(({ request, response }, next) => {
+    if (request.header('x-monitoring-secret') === env.get('APP_KEY')) return next()
+    response.unauthorized({ message: 'Unauthorized access' })
+  })
+  .prefix('api')
 
 /*
 |--------------------------------------------------------------------------
