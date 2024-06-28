@@ -1,10 +1,10 @@
 import { BaseJob } from 'adonis-resque'
+import app from '@adonisjs/core/services/app'
 
 import { ShopifyStoreJSON } from '#lib/types'
 
 import logger from '@adonisjs/core/services/logger'
 import ShopifyProcessorJob from './shopify_processor_job.js'
-import SpiderJob from './spider_job.js'
 
 interface URLProcessorJobPayload {
   url: string
@@ -14,13 +14,8 @@ interface URLProcessorJobPayload {
 export default class URLProcessorJob extends BaseJob {
   queueName = 'url_processor'
 
-  private async isShopify(url: string) {
-    const shopifyURL = url + '/products.json?limit=1000'
-    let response = await fetch(shopifyURL)
-    return response.status === 200
-  }
-
   async perform(payload: URLProcessorJobPayload) {
+    // todo)) fix shopify in shopify_processor_job
     const { url, chatbotId } = payload
     const isShopify = await this.isShopify(url)
     if (isShopify) {
@@ -33,6 +28,13 @@ export default class URLProcessorJob extends BaseJob {
       })
       return
     }
-    await SpiderJob.enqueue({ url, chatbotId })
+    const crawler = await app.container.make('crawler')
+    crawler.emit('crawl', { url, chatbotId })
+  }
+
+  private async isShopify(url: string) {
+    const shopifyURL = url + '/products.json?limit=1000'
+    let response = await fetch(shopifyURL)
+    return response.status === 200
   }
 }

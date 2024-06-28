@@ -44,7 +44,7 @@ export default class ArticlesController {
   @bindArticle()
   public async update({ response, request }: HttpContext, article: Article) {
     const payload = await request.validateUsing(updateArticleValidator)
-    article.merge(payload).save()
+    await article.merge(payload).save()
     return response.ok({ success: true, data: article })
   }
 

@@ -6,11 +6,14 @@ import { getToken } from '#lib/utils'
 
 export default class OpenAIService {
   private readonly openai: OpenAI
+
   constructor(private readonly apiKey: string) {
     this.openai = new OpenAI({ apiKey: this.apiKey })
   }
 
-  async ask(context: OpenAI.Chat.Completions.ChatCompletionMessageParam[]): Promise<string> {
+  async askWithContext(
+    context: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+  ): Promise<string> {
     // const token = getToken(JSON.stringify(context)).length
 
     const response = await this.openai.chat.completions.create({
@@ -22,6 +25,10 @@ export default class OpenAIService {
     return response.choices[0].message.content ?? ''
   }
 
+  // todo))
+  async ask(_question: string) {}
+
+  // todo))
   async askStream(
     context: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
   ): Promise<Stream<ChatCompletionChunk>> {

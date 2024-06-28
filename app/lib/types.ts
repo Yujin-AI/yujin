@@ -48,9 +48,11 @@ interface ProductImage {
   src: string
   variant_ids: number[]
 }
+
 export interface ShopifyStoreJSON {
   products: ProductInfo[]
 }
+
 interface ProductInfo {
   id: number
   title: string
@@ -68,4 +70,16 @@ interface ProductInfo {
   options: ProductOption[]
   images: ProductImage[]
   image: ProductImage
+}
+
+export interface CrawlData {
+  chatbotId: string
+  url: string
+  title: string
+  content: string
+}
+
+export interface CrawlPayload {
+  url: string
+  chatbotId: string
 }

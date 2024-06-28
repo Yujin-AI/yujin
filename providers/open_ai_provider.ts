@@ -1,6 +1,6 @@
-import { ApplicationService } from '@adonisjs/core/types'
+import type { ApplicationService } from '@adonisjs/core/types'
 
-import OpenAIService from '#services/open_ai_service'
+import type OpenAIService from '#services/open_ai_service'
 import env from '#start/env'
 
 declare module '@adonisjs/core/types' {

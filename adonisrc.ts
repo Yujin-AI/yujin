@@ -39,7 +39,10 @@ export default defineConfig({
     () => import('@adonisjs/redis/redis_provider'),
     () => import('adonis-resque/providers/resque_provider'),
     () => import('./providers/open_ai_provider.js'),
+    () => import('./providers/ollama_ai_provider.js'),
+    () => import('./providers/gemini_ai_provider.js'),
     () => import('./providers/typesense_provider.js'),
+    () => import('./providers/crawler_provider.js'),
   ],
 
   /*
