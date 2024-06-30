@@ -41,6 +41,7 @@ export default defineConfig({
     () => import('./providers/typesense_provider.js'),
     () => import('./providers/crawler_provider.js'),
     () => import('./providers/ai_provider.js'),
+    () => import('./providers/haikunator_provider.js'),
   ],
 
   /*

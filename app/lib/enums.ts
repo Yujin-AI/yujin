@@ -6,6 +6,13 @@ export enum ArticleSourceType {
   MANUAL = 'manual',
 }
 
+export enum ConversationStatus {
+  ACTIVE = 'active',
+  CLOSED = 'closed',
+  REVIEW = 'review',
+  INACTIVE = 'inactive',
+}
+
 export enum HttpStatus {
   CONTINUE = 100,
   SWITCHING_PROTOCOLS = 101,

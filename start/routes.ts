@@ -1,3 +1,5 @@
+// noinspection Eslint
+
 /*
 |--------------------------------------------------------------------------
 | Routes file
@@ -11,20 +13,25 @@
 /*
  * All the todo
  * 1. Remove all the inertia and frontend related code -- [info] DONE
- * 2. Edit the old implementation of the features to api based
- * 3. Typesense to MeiliSearch
- * 4. Improve the jobs
- *  - Shopify, Articles, Embedding & Indexing
+ * 2. Edit the old implementation of the features to api based -- [info] DONE
+ * 3. Typesense to MeiliSearch -- [info] sticking to typesense
+ * 4. Improve the jobs -- [info] DONE
+ *  - Shopify, Articles, Embedding & Indexing -- [info] DONE
  * 5. Add routes to resources
  */
 
-import router from '@adonisjs/core/services/router'
-import { middleware } from './kernel.js'
 import env from '#start/env'
+import router from '@adonisjs/core/services/router'
+import { v4 as uuid } from 'uuid'
+
+import { middleware } from './kernel.js'
+
+console.log('uuid', uuid())
 
 const ArticlesController = () => import('#controllers/articles_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const ChatbotController = () => import('#controllers/chatbot_controller')
+const ConversationController = () => import('#controllers/conversation_controller')
 const HealChecksController = () => import('#controllers/health_checks_controller')
 
 router
@@ -122,3 +129,14 @@ router // Protected routes
   })
   .prefix('api/:chatbotSlug')
   .use([middleware.auth(), middleware.chatbotOwnership()])
+
+/*
+|--------------------------------------------------------------------------
+| Conversation routes
+|--------------------------------------------------------------------------
+*/
+router
+  .post('api/:chatbotSlug/conversations', [ConversationController, 'store'])
+  .use(middleware.keyAuth())
+//note))
+// add x-api-key header for public routers that are only accessible by chat-widget or account holder of the chatbot

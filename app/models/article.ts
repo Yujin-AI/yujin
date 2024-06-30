@@ -1,21 +1,21 @@
 import string from '@adonisjs/core/helpers/string'
 import {
-  BaseModel,
   afterDelete,
   afterSave,
+  BaseModel,
   beforeCreate,
   belongsTo,
   column,
 } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
+import app from '@adonisjs/core/services/app'
 
 import EmbeddingArticlesJob from '#jobs/embedding_articles_job'
 import { ArticleSourceType } from '#lib/enums'
 import { isUUID } from '#lib/utils'
 import env from '#start/env'
-import app from '@adonisjs/core/services/app'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Chatbot from './chatbot.js'
 
 export default class Article extends BaseModel {
@@ -45,13 +45,13 @@ export default class Article extends BaseModel {
   @column()
   declare contentLength?: number
 
-  @column() // will it be used to train bot
+  @column() // will it be used to train bot?
   declare isProcessed: boolean
 
   @column()
   declare slug: string
 
-  @column() // is it published publicly
+  @column() // is it published publicly?
   declare isPublished: boolean
 
   @column.dateTime({ autoCreate: true })
@@ -59,6 +59,9 @@ export default class Article extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @belongsTo(() => Chatbot)
+  declare chatbot: BelongsTo<typeof Chatbot>
 
   //todo)) when slugify package is migrated to v6 use it
   @beforeCreate()
@@ -107,9 +110,6 @@ export default class Article extends BaseModel {
     const typesense = await app.container.make('typesense')
     await typesense.collections(env.get('TYPESENSE_COLLECTION')).documents(article.id).delete()
   }
-
-  @belongsTo(() => Chatbot)
-  declare chatbot: BelongsTo<typeof Chatbot>
 
   static getArticleBySlugOrId(slugOrId: string) {
     return isUUID(slugOrId)

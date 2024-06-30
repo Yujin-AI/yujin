@@ -43,3 +43,6 @@ Product URL:
 
 Note: These instructions aim to summarize a product from the json of product details. The summary should be concise and informative, providing a clear understanding of the product and its features. The summary should be written in a way that is easy to understand and engaging for the reader. The summary should be free from any grammatical errors and should be written in a professional tone.
 `
+
+export const EncryptionAlgorithm = 'aes-256-cbc'
+export const IVLength = 16
