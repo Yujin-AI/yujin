@@ -13,6 +13,12 @@ export enum ConversationStatus {
   INACTIVE = 'inactive',
 }
 
+export enum MessageSenderType {
+  YUJIN = 'yujin',
+  CUSTOMER = 'customer',
+  AGENT = 'agent',
+}
+
 export enum HttpStatus {
   CONTINUE = 100,
   SWITCHING_PROTOCOLS = 101,
