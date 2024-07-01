@@ -1,6 +1,6 @@
-import OpenAIService from './open_ai_service.js'
-import env from '#start/env'
 import OllamaAIService from '#services/ollama_ai_service'
+import OpenAIService from '#services/open_ai_service'
+import env from '#start/env'
 
 export default function AIServiceFactory() {
   const aiProvider = env.get('AI_PROVIDER')

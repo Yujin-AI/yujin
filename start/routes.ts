@@ -32,6 +32,7 @@ const ArticlesController = () => import('#controllers/articles_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const ChatbotController = () => import('#controllers/chatbot_controller')
 const ConversationController = () => import('#controllers/conversation_controller')
+const CustomerController = () => import('#controllers/customer_controller')
 const HealChecksController = () => import('#controllers/health_checks_controller')
 
 router
@@ -138,5 +139,12 @@ router // Protected routes
 router
   .post('api/:chatbotSlug/conversations', [ConversationController, 'store'])
   .use(middleware.keyAuth())
-//note))
-// add x-api-key header for public routers that are only accessible by chat-widget or account holder of the chatbot
+
+/*
+|--------------------------------------------------------------------------
+| Customer routes
+|--------------------------------------------------------------------------
+*/
+router
+  .get('api/:chatbotSlug/customers', [CustomerController, 'index'])
+  .use([middleware.auth(), middleware.chatbotOwnership()])

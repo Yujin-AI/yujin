@@ -20,6 +20,12 @@ export default class ConversationModelsController {
       createConversationValidation
     )
 
+    // todo)) add constrains
+    // sessionId and customerId should be unique for each chatbot
+    // a customer can have multiple sessions/conversations
+    // a customer can have multiple attributes
+    // a session/conversation can not have multiple customers or customerIds
+
     // Find or create a customer
     const customer = await Customer.firstOrCreate(
       {

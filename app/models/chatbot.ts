@@ -9,6 +9,7 @@ import { isUUID } from '#lib/utils'
 import Article from '#models/article'
 import Conversation from '#models/conversation'
 import CustomAttributeKey from '#models/custom_attribute_key'
+import Customer from '#models/customer'
 import User from '#models/user'
 import env from '#start/env'
 
@@ -59,6 +60,9 @@ export default class Chatbot extends BaseModel {
 
   @hasMany(() => CustomAttributeKey)
   declare customAttributeKeys: HasMany<typeof CustomAttributeKey>
+
+  @hasMany(() => Customer)
+  declare customers: HasMany<typeof Customer>
 
   //todo)) when slugify package is migrated to v6 use it
   @beforeCreate()

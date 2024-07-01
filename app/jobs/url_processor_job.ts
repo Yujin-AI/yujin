@@ -1,10 +1,9 @@
-import { BaseJob } from 'adonis-resque'
 import app from '@adonisjs/core/services/app'
-
-import { ShopifyStoreJSON } from '#lib/types'
-
 import logger from '@adonisjs/core/services/logger'
-import ShopifyProcessorJob from './shopify_processor_job.js'
+import { BaseJob } from 'adonis-resque'
+
+import ShopifyProcessorJob from '#jobs/shopify_processor_job'
+import { ShopifyStoreJSON } from '#lib/types'
 
 interface URLProcessorJobPayload {
   url: string

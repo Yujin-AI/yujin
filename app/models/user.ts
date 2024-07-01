@@ -6,7 +6,8 @@ import { BaseModel, beforeCreate, column, computed, hasMany } from '@adonisjs/lu
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
-import Chatbot from './chatbot.js'
+
+import Chatbot from '#models/chatbot'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],

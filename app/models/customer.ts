@@ -1,11 +1,12 @@
-import { BaseModel, beforeCreate, column, hasMany } from '@adonisjs/lucid/orm'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import app from '@adonisjs/core/services/app'
+import { BaseModel, beforeCreate, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
+import Chatbot from '#models/chatbot'
 import Conversation from '#models/conversation'
 import CustomAttributeKey from '#models/custom_attribute_key'
-import app from '@adonisjs/core/services/app'
 
 export default class Customer extends BaseModel {
   static selfAssignPrimaryKey = true
@@ -39,6 +40,16 @@ export default class Customer extends BaseModel {
 
   @hasMany(() => Conversation)
   declare conversations: HasMany<typeof Conversation>
+
+  @belongsTo(() => Chatbot)
+  declare chatbot: BelongsTo<typeof Chatbot>
+  @hasMany(() => CustomAttributeKey, {
+    foreignKey: 'entityId',
+    onQuery(query) {
+      query.where('entity_type', 'customer')
+    },
+  })
+  declare attributes: HasMany<typeof CustomAttributeKey>
 
   @beforeCreate()
   public static async assignUUID(customer: Customer) {
@@ -93,8 +104,20 @@ export default class Customer extends BaseModel {
     const key = await CustomAttributeKey.query()
       .where('chatbot_id', this.chatbotId)
       .andWhere('entity_type', 'customer')
-      .preload('customAttributeValues')
-    return key
+      .select('id', 'attribute_key')
+      .preload('customAttributeValues', (query) => {
+        query.where('entity_id', this.id).select('id', 'attribute_value')
+      })
+
+    const keyMap = key.reduce(
+      (acc, key) => {
+        acc[key.attributeKey] = key.customAttributeValues[0]?.attributeValue
+        return acc
+      },
+      {} as Record<string, string>
+    )
+
+    return keyMap
   }
 
   async updateLastSeen() {

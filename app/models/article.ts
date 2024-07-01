@@ -1,4 +1,5 @@
 import string from '@adonisjs/core/helpers/string'
+import app from '@adonisjs/core/services/app'
 import {
   afterDelete,
   afterSave,
@@ -10,13 +11,12 @@ import {
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
-import app from '@adonisjs/core/services/app'
 
 import EmbeddingArticlesJob from '#jobs/embedding_articles_job'
 import { ArticleSourceType } from '#lib/enums'
 import { isUUID } from '#lib/utils'
+import Chatbot from '#models/chatbot'
 import env from '#start/env'
-import Chatbot from './chatbot.js'
 
 export default class Article extends BaseModel {
   static selfAssignPrimaryKey = true
