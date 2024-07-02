@@ -148,3 +148,10 @@ router
 router
   .get('api/:chatbotSlug/customers', [CustomerController, 'index'])
   .use([middleware.auth(), middleware.chatbotOwnership()])
+
+import transmit from '@adonisjs/transmit/services/main'
+
+router.get('/', async ({ response }) => {
+  response.send('Hello world')
+  transmit.broadcast('global', { message: 'Hello' })
+})

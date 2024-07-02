@@ -37,6 +37,7 @@ export default defineConfig({
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/redis/redis_provider'),
+    () => import('@adonisjs/transmit/transmit_provider'),
     () => import('adonis-resque/providers/resque_provider'),
     () => import('./providers/typesense_provider.js'),
     () => import('./providers/crawler_provider.js'),
