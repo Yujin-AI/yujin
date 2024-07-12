@@ -61,7 +61,7 @@ export default class Yujin {
       prompt = prompt.replaceAll(
         '{{customerAttributes}}',
         JSON.stringify({
-          name: customer.name,
+          name: customer.name.startsWith('anonymous') ? '' : customer.name,
           ...customerAttributes,
         })
       )

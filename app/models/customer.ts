@@ -55,7 +55,7 @@ export default class Customer extends BaseModel {
   public static async assignUUID(customer: Customer) {
     customer.id = customer.id || uuid()
     const haikunator = await app.container.make('haikunator')
-    customer.name = customer.name || 'anonymous' + haikunator.haikunate()
+    customer.name = customer.name || 'anonymous ' + haikunator.haikunate()
   }
 
   static async findOrCreateAttributeKeys(chatbotId: string, keys: string[]) {

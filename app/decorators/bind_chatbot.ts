@@ -23,7 +23,10 @@ const bindChatbot = () => (_target: any, _key: any, descriptor: PropertyDescript
       return await originalMethod.call(this, ctx, chatbot)
     } catch (error) {
       logger.error(error, 'Failed to bind chatbot.')
-      return response.badRequest({ success: false, errors: error.messages || 'Chatbot not found' })
+      return response.internalServerError({
+        success: false,
+        errors: error.messages || error.message || 'Chatbot not found',
+      })
     }
   }
   return descriptor

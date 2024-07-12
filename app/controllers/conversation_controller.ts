@@ -11,12 +11,14 @@ export default class ConversationModelsController {
     const conversations = await chatbot
       .related('conversations')
       .query()
-      .select('id', 'session_id', 'customer_id')
+      // todo)) add message level seen status
+      .select('id', 'title', 'source', 'status', 'seen', 'customer_id', 'created_at')
       .preload('messages', (q) => {
-        q.select('id', 'conversation_id', 'content', 'created_at')
-      })
-      .with('lastMessage', (query) => {
-        // query.select('id', 'conversation_id', 'content', 'created_at')
+        q.where('sender_type', 'customer')
+          .orderBy('created_at', 'desc')
+          .select('id', 'conversation_id', 'content', 'created_at')
+          .as('lastMessage')
+          .limit(1)
       })
       .orderBy('created_at', 'desc')
       .preload('customer', (q) => {
