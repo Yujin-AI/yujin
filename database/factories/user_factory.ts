@@ -1,7 +1,7 @@
 import factory from '@adonisjs/lucid/factories'
 
+import ChatbotFactory from '#database/factories/chatbot_factory'
 import User from '#models/user'
-import ChatbotFactory from './chatbot_factory.js'
 
 const UserFactory = factory
   .define(User, async ({ faker }) => ({

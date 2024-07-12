@@ -1,7 +1,8 @@
-import env from '#start/env'
 import { ApplicationService } from '@adonisjs/core/types'
 import { Client } from 'typesense'
 import { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections.js'
+
+import env from '#start/env'
 
 declare module '@adonisjs/core/types' {
   interface ContainerBindings {

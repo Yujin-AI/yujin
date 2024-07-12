@@ -9,7 +9,7 @@
 |
 */
 
-import {Env} from '@adonisjs/core/env'
+import { Env } from '@adonisjs/core/env'
 
 export default await Env.create(new URL('../', import.meta.url), {
   NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
@@ -44,6 +44,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   AI_PROVIDER: Env.schema.enum(['openai', 'ollama', 'gemini'] as const),
   AI_API_KEY: Env.schema.string(),
   GEMINI_API_KEY: Env.schema.string(),
+  GROQ_API_KEY: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
@@ -58,10 +59,11 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
-  | Constants
+  | Yujin Config
   |----------------------------------------------------------
   */
   CRAWLER_API: Env.schema.string(),
+  MESSAGE_HISTORY_LIMIT: Env.schema.number(),
 
   /*
   |----------------------------------------------------------

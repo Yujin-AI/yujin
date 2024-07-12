@@ -1,8 +1,9 @@
 import { DiskSpaceCheck, HealthChecks, MemoryHeapCheck } from '@adonisjs/core/health'
-import db from '@adonisjs/lucid/services/db'
 import { DbCheck, DbConnectionCountCheck } from '@adonisjs/lucid/database'
-import redis from '@adonisjs/redis/services/main'
+import db from '@adonisjs/lucid/services/db'
 import { RedisCheck, RedisMemoryUsageCheck } from '@adonisjs/redis'
+import redis from '@adonisjs/redis/services/main'
+
 import TypesenseHealthCheck from '../app/health_checks/typesense_health_check.js'
 
 export const healthChecks = new HealthChecks().register([

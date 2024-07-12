@@ -37,10 +37,12 @@ export default defineConfig({
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/redis/redis_provider'),
+    () => import('@adonisjs/transmit/transmit_provider'),
     () => import('adonis-resque/providers/resque_provider'),
     () => import('./providers/typesense_provider.js'),
     () => import('./providers/crawler_provider.js'),
     () => import('./providers/ai_provider.js'),
+    () => import('./providers/haikunator_provider.js'),
   ],
 
   /*
@@ -51,7 +53,7 @@ export default defineConfig({
   | List of modules to import before starting the application.
   |
   */
-  preloads: [() => import('#start/routes'), () => import('#start/kernel')],
+  preloads: [() => import('#start/routes'), () => import('#start/kernel'), () => import('#start/events')],
 
   /*
   |--------------------------------------------------------------------------

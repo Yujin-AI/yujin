@@ -1,14 +1,17 @@
 import string from '@adonisjs/core/helpers/string'
+import app from '@adonisjs/core/services/app'
+import { BaseModel, afterDelete, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
 import { isUUID } from '#lib/utils'
+import Article from '#models/article'
+import Conversation from '#models/conversation'
+import CustomAttributeKey from '#models/custom_attribute_key'
+import Customer from '#models/customer'
+import User from '#models/user'
 import env from '#start/env'
-import app from '@adonisjs/core/services/app'
-import { BaseModel, afterDelete, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
-import Article from './article.js'
-import User from './user.js'
 
 export default class Chatbot extends BaseModel {
   static selfAssignPrimaryKey = true
@@ -36,6 +39,30 @@ export default class Chatbot extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @hasOne(() => User, {
+    localKey: 'creatorId',
+    foreignKey: 'id',
+  })
+  declare creator: HasOne<typeof User>
+
+  @hasOne(() => User, {
+    localKey: 'ownerId',
+    foreignKey: 'id',
+  })
+  declare owner: HasOne<typeof User>
+
+  @hasMany(() => Article)
+  declare articles: HasMany<typeof Article>
+
+  @hasMany(() => Conversation)
+  declare conversations: HasMany<typeof Conversation>
+
+  @hasMany(() => CustomAttributeKey)
+  declare customAttributeKeys: HasMany<typeof CustomAttributeKey>
+
+  @hasMany(() => Customer)
+  declare customers: HasMany<typeof Customer>
 
   //todo)) when slugify package is migrated to v6 use it
   @beforeCreate()
@@ -93,19 +120,4 @@ export default class Chatbot extends BaseModel {
     if (!article) return false
     return article.chatbotId === this.id
   }
-
-  @hasOne(() => User, {
-    localKey: 'creatorId',
-    foreignKey: 'id',
-  })
-  declare creator: HasOne<typeof User>
-
-  @hasOne(() => User, {
-    localKey: 'ownerId',
-    foreignKey: 'id',
-  })
-  declare owner: HasOne<typeof User>
-
-  @hasMany(() => Article)
-  declare articles: HasMany<typeof Article>
 }

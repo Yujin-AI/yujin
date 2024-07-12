@@ -85,6 +85,37 @@ export interface CrawlPayload {
 }
 
 export interface ChatContext {
-  role: 'user' | 'system'
+  role: 'user' | 'system' | 'tool'
   content: string
+}
+
+export interface LLMFunctionDeclaration {
+  name: string
+  description: string
+  parameters: {
+    type: string
+    description: string
+    properties: {
+      [key: string]: {
+        type: string
+        description: string
+      }
+    }
+    required: string[]
+  }
+  return?: {
+    type: string
+    properties: {
+      [key: string]: {
+        type: string
+        description: string
+        properties: {
+          [key: string]: {
+            type: string
+            description: string
+          }
+        }
+      }
+    }
+  }
 }
