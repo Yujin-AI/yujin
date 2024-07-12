@@ -6,8 +6,24 @@ import Customer from '#models/customer'
 import { createConversationValidation } from '#validators/conversation_validator'
 
 export default class ConversationModelsController {
-  public async index({}: HttpContext) {
-    return 'Hello'
+  @bindChatbot()
+  public async index({}: HttpContext, chatbot: Chatbot) {
+    const conversations = await chatbot
+      .related('conversations')
+      .query()
+      .select('id', 'session_id', 'customer_id')
+      .preload('messages', (q) => {
+        q.select('id', 'conversation_id', 'content', 'created_at')
+      })
+      .with('lastMessage', (query) => {
+        // query.select('id', 'conversation_id', 'content', 'created_at')
+      })
+      .orderBy('created_at', 'desc')
+      .preload('customer', (q) => {
+        q.select('id', 'name')
+      })
+
+    return { success: true, data: conversations }
   }
 
   public async show({}: HttpContext) {

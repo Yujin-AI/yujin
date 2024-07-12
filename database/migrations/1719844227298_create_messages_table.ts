@@ -8,7 +8,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary().defaultTo(this.db.rawQuery('gen_random_uuid()').knexQuery)
-      table.string('content').notNullable()
+      table.text('content').notNullable()
       table
         .enum('sender_type', Object.values(MessageSenderType), {
           enumName: 'message_sender_type',

@@ -44,6 +44,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   AI_PROVIDER: Env.schema.enum(['openai', 'ollama', 'gemini'] as const),
   AI_API_KEY: Env.schema.string(),
   GEMINI_API_KEY: Env.schema.string(),
+  GROQ_API_KEY: Env.schema.string(),
 
   /*
   |----------------------------------------------------------

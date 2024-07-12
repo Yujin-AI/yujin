@@ -13,7 +13,7 @@ export const getToken = (value: string) => encoding_for_model('gpt-4-1106-previe
 export const reformMDUsingAI = async (content: string) => {
   const ai = await app.container.make('ai')
 
-  return await ai.askWithContext([
+  const response = await ai.askWithContext([
     {
       role: 'user',
       content: WebScrapeSystemPrompt,
@@ -27,6 +27,7 @@ export const reformMDUsingAI = async (content: string) => {
       content,
     },
   ])
+  return response.choices[0].message.content
 }
 
 export const isUUID = (value: string) => {

@@ -22,11 +22,8 @@
 
 import env from '#start/env'
 import router from '@adonisjs/core/services/router'
-import { v4 as uuid } from 'uuid'
 
 import { middleware } from './kernel.js'
-
-console.log('uuid', uuid())
 
 const ArticlesController = () => import('#controllers/articles_controller')
 const AuthController = () => import('#controllers/auth_controller')
@@ -34,6 +31,7 @@ const ChatbotController = () => import('#controllers/chatbot_controller')
 const ConversationController = () => import('#controllers/conversation_controller')
 const CustomerController = () => import('#controllers/customer_controller')
 const HealChecksController = () => import('#controllers/health_checks_controller')
+const MessageController = () => import('#controllers/message_controller')
 
 router
   .get('api/auth/me', async ({ response, auth }) => {
@@ -139,6 +137,9 @@ router // Protected routes
 router
   .post('api/:chatbotSlug/conversations', [ConversationController, 'store'])
   .use(middleware.keyAuth())
+router
+  .get('api/:chatbotSlug/conversations', [ConversationController, 'index'])
+  .use([middleware.auth(), middleware.chatbotOwnership()])
 
 /*
 |--------------------------------------------------------------------------
@@ -149,9 +150,16 @@ router
   .get('api/:chatbotSlug/customers', [CustomerController, 'index'])
   .use([middleware.auth(), middleware.chatbotOwnership()])
 
-import transmit from '@adonisjs/transmit/services/main'
+// import transmit from '@adonisjs/transmit/services/main'
 
-router.get('/', async ({ response }) => {
-  response.send('Hello world')
-  transmit.broadcast('global', { message: 'Hello' })
-})
+// router.get('/', async ({ response }) => {
+//   response.send('Hello world')
+//   transmit.broadcast('global', { message: 'Hello' })
+// })
+
+/*
+|--------------------------------------------------------------------------
+| Message routes
+|--------------------------------------------------------------------------
+*/
+router.post('api/:conversationId/messages', [MessageController, 'store']).use(middleware.keyAuth())

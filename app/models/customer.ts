@@ -55,7 +55,7 @@ export default class Customer extends BaseModel {
   public static async assignUUID(customer: Customer) {
     customer.id = customer.id || uuid()
     const haikunator = await app.container.make('haikunator')
-    customer.name = customer.name || haikunator.haikunate()
+    customer.name = customer.name || 'anonymous' + haikunator.haikunate()
   }
 
   static async findOrCreateAttributeKeys(chatbotId: string, keys: string[]) {
@@ -109,15 +109,13 @@ export default class Customer extends BaseModel {
         query.where('entity_id', this.id).select('id', 'attribute_value')
       })
 
-    const keyMap = key.reduce(
+    return key.reduce(
       (acc, key) => {
         acc[key.attributeKey] = key.customAttributeValues[0]?.attributeValue
         return acc
       },
       {} as Record<string, string>
     )
-
-    return keyMap
   }
 
   async updateLastSeen() {
