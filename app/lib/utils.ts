@@ -71,3 +71,7 @@ export const decrypt = (text: string): string => {
 
   return decrypted
 }
+
+export const generateRandomString = (length: number) => {
+  return crypto.randomBytes(length).toString('hex').slice(0, length)
+}

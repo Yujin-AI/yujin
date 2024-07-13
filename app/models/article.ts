@@ -14,7 +14,7 @@ import { v4 as uuid } from 'uuid'
 
 import EmbeddingArticlesJob from '#jobs/embedding_articles_job'
 import { ArticleSourceType } from '#lib/enums'
-import { isUUID } from '#lib/utils'
+import { generateRandomString, isUUID } from '#lib/utils'
 import Chatbot from '#models/chatbot'
 import env from '#start/env'
 
@@ -68,36 +68,32 @@ export default class Article extends BaseModel {
   static async assignIdAndSlug(article: Article) {
     article.id = article.id || uuid()
     if (article.slug) return
+    let potentialSlug = article.title
+    if (article.sourceUrl) {
+      const url = new URL(article.sourceUrl)
+      potentialSlug = url.pathname.slice(1).replaceAll('/', '-')
+    }
 
-    const slug = string.slug(article.title, {
+    let slug = string.slug(`${potentialSlug} ${generateRandomString(5)}`, {
       lower: true,
       replacement: '-',
       strict: true,
       remove: /[|]/g,
     })
 
-    const rows = await Article.query()
-      .select('slug')
-      .whereRaw('lower(??) = ?', ['slug', slug])
-      .orWhereRaw('lower(??) like ?', ['slug', `${slug}-%`])
+    while (true) {
+      const existing = await Article.findBy('slug', slug)
+      if (!existing) break
 
-    if (!rows.length) {
-      article.slug = slug
-      return
+      slug = string.slug(`${potentialSlug} ${generateRandomString(5)}`, {
+        lower: true,
+        replacement: '-',
+        strict: true,
+        remove: /[|]/g,
+      })
     }
 
-    const incrementor = rows.reduce<number[]>(
-      (acc, row) => {
-        const match = row.slug.match(new RegExp(`^${slug}-(\\d+)$`, 'i'))
-        if (match) {
-          acc.push(parseInt(match[1], 10))
-        }
-        return acc
-      },
-      [0]
-    )
-
-    article.slug = incrementor.length ? `${slug}-${Math.max(...incrementor) + 1}` : slug
+    article.slug = slug
   }
 
   @afterSave()
