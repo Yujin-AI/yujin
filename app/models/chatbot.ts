@@ -1,11 +1,11 @@
 import string from '@adonisjs/core/helpers/string'
 import app from '@adonisjs/core/services/app'
-import { BaseModel, afterDelete, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
+import { afterDelete, BaseModel, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
-import { isUUID } from '#lib/utils'
+import { generateRandomString, isUUID } from '#lib/utils'
 import Article from '#models/article'
 import Conversation from '#models/conversation'
 import CustomAttributeKey from '#models/custom_attribute_key'
@@ -70,34 +70,24 @@ export default class Chatbot extends BaseModel {
     chatbot.id = chatbot.id || uuid()
     if (chatbot.slug) return
 
-    const slug = string.slug(chatbot.name, {
+    let slug = string.slug(chatbot.name, {
       lower: true,
       replacement: '-',
       strict: true,
     })
 
-    const rows = await Chatbot.query()
-      .select('slug')
-      .whereRaw('lower(??) = ?', ['slug', slug])
-      .orWhereRaw('lower(??) like ?', ['slug', `${slug}-%`])
-
-    if (!rows.length) {
-      chatbot.slug = slug
-      return
+    while (true) {
+      const existing = await Chatbot.findBy('slug', slug)
+      if (!existing) break
+      slug = string.slug(`${chatbot.name} ${generateRandomString(5)}`, {
+        lower: true,
+        replacement: '-',
+        strict: true,
+        remove: /[|]/g,
+      })
     }
 
-    const incrementor = rows.reduce<number[]>(
-      (acc, row) => {
-        const match = row.slug.match(new RegExp(`^${slug}-(\\d+)$`, 'i'))
-        if (match) {
-          acc.push(parseInt(match[1], 10))
-        }
-        return acc
-      },
-      [0]
-    )
-
-    chatbot.slug = incrementor.length ? `${slug}-${Math.max(...incrementor) + 1}` : slug
+    chatbot.slug = slug
   }
 
   @afterDelete()
