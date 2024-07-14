@@ -1,8 +1,14 @@
 import app from '@adonisjs/core/services/app'
 import { encoding_for_model } from '@dqbd/tiktoken'
 import crypto from 'crypto'
+import turndownService from 'turndown'
 
-import { EncryptionAlgorithm, IVLength, WebScrapeSystemPrompt } from '#lib/constants'
+import {
+  EncryptionAlgorithm,
+  IVLength,
+  ShopifyScrapePrompt,
+  WebScrapeSystemPrompt,
+} from '#lib/constants'
 import env from '#start/env'
 
 export const removeTrailingSlash = (value: string) => value.replace(/\/+$/, '')
@@ -13,21 +19,63 @@ export const getToken = (value: string) => encoding_for_model('gpt-4-1106-previe
 export const reformMDUsingAI = async (content: string) => {
   const ai = await app.container.make('ai')
 
-  const response = await ai.askWithContext([
-    {
-      role: 'user',
-      content: WebScrapeSystemPrompt,
-    },
-    {
-      role: 'system',
-      content: 'Now send me the markdown',
-    },
-    {
-      role: 'user',
-      content,
-    },
-  ])
-  return response.choices[0].message.content
+  try {
+    const response = await ai.askWithContext([
+      {
+        role: 'user',
+        content: WebScrapeSystemPrompt,
+      },
+      {
+        role: 'system',
+        content: 'Now send me the markdown',
+      },
+      {
+        role: 'user',
+        content,
+      },
+    ])
+    const ans = response.choices[0].message.content ?? content
+    const isEnhanced = !!response.choices[0]?.message?.content
+    return { ans, isEnhanced }
+  } catch (error) {
+    console.error('Error extracting markdown using AI:', error)
+    return { ans: content, isEnhanced: false }
+  }
+}
+
+export const jsonToMDUsingAI = async (json: Record<string, any>, url: string) => {
+  const { title, ...info } = json
+  info.body_html = info.body_html && removeSvgTags(info.body_html)
+
+  // [info] this will trim the token usage for the AI
+  info.body_markdown = new turndownService().turndown(info.body_html)
+  delete info.body_html
+  
+  try {
+    const ai = await app.container.make('ai')
+    const aiResponse = await ai.askWithContext([
+      {
+        role: 'system',
+        content: ShopifyScrapePrompt.replace('{{title}}', title).replace('{{url}}', url),
+      },
+      {
+        role: 'user',
+        content: JSON.stringify({
+          title,
+          content: info,
+        }),
+      },
+    ])
+
+    const isEnhanced = !!aiResponse.choices[0]?.message?.content
+
+    const ans = aiResponse.choices[0]?.message?.content ?? JSON.stringify(json)
+    return { ans, isEnhanced }
+  } catch (error) {
+    console.error('Error converting JSON to markdown using AI:', error)
+
+    return { ans: JSON.stringify(json), isEnhanced: false }
+  }
 }
 
 export const isUUID = (value: string) => {
@@ -74,4 +122,9 @@ export const decrypt = (text: string): string => {
 
 export const generateRandomString = (length: number) => {
   return crypto.randomBytes(length).toString('hex').slice(0, length)
+}
+
+export const removeSvgTags = (htmlContent: string) => {
+  const regex = /<svg\b[^>]*>[\s\S]*?<\/svg>/gi
+  return htmlContent.replace(regex, '')
 }

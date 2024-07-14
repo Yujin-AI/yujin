@@ -2,41 +2,47 @@ export const EncryptionAlgorithm = 'aes-256-cbc'
 export const IVLength = 16
 
 export const WebScrapeSystemPrompt = `
-Disclaimer: The provided content is a conversion of a webpage into a structured Markdown document using [TURNDOWN](https://github.com/mixmark-io/turndown) package. The content may be incomplete or require further editing to ensure accuracy and readability.
+**Disclaimer:**
+The provided content is a conversion of a webpage into a structured Markdown document using the [TURNDOWN](https://github.com/mixmark-io/turndown) package. The content may be incomplete or require further editing to ensure accuracy and readability.
 
-Objective: Transform extracted webpage texts into a structured and readable Markdown document.
+**Objective:**
+Transform extracted webpage texts into a structured and readable Markdown document.
 
-Formatting Guidelines:
-Utilize Markdown elements like headings, subheadings, lists, and tables to organize content.
-Ensure clarity and readability throughout the document.
-Ensure the document reads like a actual knowledge base help article with narration in voice of the company.
-The title of the document is the title given.
-Keep the document very detailed and don't skip crucial information.
+**Formatting Guidelines:**
+- Utilize Markdown elements such as headings, subheadings, lists, and tables to organize content.
+- Ensure clarity and readability throughout the document.
+- Write the document in the voice of the company, as if it were an actual knowledge base help article.
+- The title of the document should be the title given.
+- Keep the document detailed and comprehensive, including all crucial information.
 
-Content Management:
-There may be some code snippets in the content, please ensure they are formatted correctly with respect to the language.
+**Content Management:**
+- Format any code snippets correctly according to their respective languages.
+- Exclude non-essential elements such as header and footer navigation, sidebar content, and any footer elements.
 
-Exclude Non-Essential Elements: Remove all navigational items such as header and footer navigation, sidebar content, and any footer elements.
+**Quality Assurance:**
+- Check for grammatical accuracy and coherence in the text.
+- Ensure that the Markdown formatting is correctly applied and renders properly.
 
-Quality Assurance:
+**Additional Considerations:**
+- Format hyperlinks appropriately using Markdown syntax.
+- Use bulleted or numbered lists for sequential or non-sequential points to enhance readability.
+- Where applicable, use tables to present data in a structured manner.
 
-Check for grammatical accuracy and coherence in the text.
-Ensure that the Markdown formatting is correctly applied and renders properly.
-Additional Considerations:
-
-If the text contains hyperlinks, format them appropriately using Markdown syntax.
-Use bulleted or numbered lists for sequential or non-sequential points for better readability.
-Where applicable, use tables to present data in a structured manner.
-Note: These instructions aim to guide the conversion of webpage content into a more accessible and comprehensible format while maintaining the integrity and purpose of the original text.`
+**Note:**
+These instructions aim to guide the conversion of webpage content into a more accessible and comprehensible format while maintaining the integrity and purpose of the original text.
+`
 
 export const ShopifyScrapePrompt = `
-Objective: Create summary of a product from json of product details in markdown format.
+**Objective:**
+Create a summary of a product from a JSON of product details in markdown format.
 
-Guidelines:
-Do not mention 'shopify' anywhere.
+**Guidelines:**
+- Do not mention 'Shopify' anywhere.
+- Provide a concise and informative summary.
+- Ensure the summary is free of grammatical errors and written in a professional tone.
 
-Content Management:
-If there is skus(variants) then make a table comparing those with prices and variants.
+**Content Management:**
+- If there are SKUs (variants), create a table comparing them with prices and details.
 
 Product Title:
 {{title}}
@@ -44,7 +50,8 @@ Product Title:
 Product URL:
 {{url}}
 
-Note: These instructions aim to summarize a product from the json of product details. The summary should be concise and informative, providing a clear understanding of the product and its features. The summary should be written in a way that is easy to understand and engaging for the reader. The summary should be free from any grammatical errors and should be written in a professional tone.
+**Note:**
+- The summary should be easy to understand and engaging for the reader.
 `
 
 export const YujinConversationPrompt = `

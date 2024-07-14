@@ -11,8 +11,6 @@ import {
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
-
-import EmbeddingArticlesJob from '#jobs/embedding_articles_job'
 import { ArticleSourceType } from '#lib/enums'
 import { generateRandomString, isUUID } from '#lib/utils'
 import Chatbot from '#models/chatbot'
@@ -42,9 +40,6 @@ export default class Article extends BaseModel {
   @column()
   declare error: string
 
-  @column()
-  declare contentLength?: number
-
   @column() // will it be used to train bot?
   declare isProcessed: boolean
 
@@ -53,6 +48,9 @@ export default class Article extends BaseModel {
 
   @column() // is it published publicly?
   declare isPublished: boolean
+
+  @column()
+  declare isEnhanced: boolean
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -98,7 +96,16 @@ export default class Article extends BaseModel {
 
   @afterSave()
   static async updateEmbeddingAndIndex(article: Article) {
-    await EmbeddingArticlesJob.enqueue({ articleId: article.id })
+    const typesense = await app.container.make('typesense')
+    await typesense.collections(env.get('TYPESENSE_COLLECTION')).documents().upsert({
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      sourceUrl: article.sourceUrl,
+      chatbotId: article.chatbotId,
+      createdAt: article.createdAt.toMillis(),
+      updatedAt: article.updatedAt.toMillis(),
+    })
   }
 
   @afterDelete()
