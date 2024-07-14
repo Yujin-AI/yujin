@@ -36,6 +36,7 @@ const resqueConfig = defineConfig({
    * All the jobs in high-priority will be worked before any of the jobs in the other queues.
    */
   queueNameForWorkers: '*',
+
   /**
    * logger name in config/logger.ts
    * null means the default

@@ -1,9 +1,8 @@
 import app from '@adonisjs/core/services/app'
-import logger from '@adonisjs/core/services/logger'
 import { BaseJob } from 'adonis-resque'
-
-import ShopifyProcessorJob from '#jobs/shopify_processor_job'
+import logger from '@adonisjs/core/services/logger'
 import { ShopifyStoreJSON } from '#lib/types'
+import ShopifyProcessorJob from '#jobs/shopify_processor_job'
 
 interface URLProcessorJobPayload {
   url: string
@@ -11,28 +10,43 @@ interface URLProcessorJobPayload {
 }
 
 export default class URLProcessorJob extends BaseJob {
-  queueName = 'url_processor'
-
   async perform(payload: URLProcessorJobPayload) {
-    // todo)) fix shopify in shopify_processor_job
     const { url, chatbotId } = payload
     const isShopify = await this.isShopify(url)
-    if (isShopify) {
-      logger.info('Shopify store detected: ', url)
-      const response = await fetch(url + '/products.json?limit=1000')
-      const products = (await response.json()) as unknown as ShopifyStoreJSON
-      products.products.forEach(async (product) => {
-        const productURL = `${url}/products/${product.handle}.json`
-        await ShopifyProcessorJob.enqueue({ url: productURL, chatbotId })
-      })
+    if (!isShopify) {
+      const crawler = await app.container.make('crawler')
+      crawler.emit('crawl', { url, chatbotId })
       return
     }
-    const crawler = await app.container.make('crawler')
-    crawler.emit('crawl', { url, chatbotId })
+    logger.info('Shopify store detected: ', url)
+    let page = 1
+    let totalProducts = 0
+    while (true) {
+      const response = await fetch(url + '/products.json?limit=250' + '&page=' + page)
+
+      const { products } = (await response.json()) as unknown as ShopifyStoreJSON
+      totalProducts += products.length
+
+      if (products.length === 0) {
+        break
+      }
+
+      for (const product of products) {
+        const productURL = `${url}/products/${product.handle}`
+        await ShopifyProcessorJob.enqueue({ url: productURL, chatbotId })
+      }
+      page++
+    }
+
+    logger.info(`Total products in store: `, {
+      url,
+      totalProducts,
+      chatbotId,
+    })
   }
 
   private async isShopify(url: string) {
-    const shopifyURL = url + '/products.json?limit=1000'
+    const shopifyURL = url + '/products.json?limit=1'
     let response = await fetch(shopifyURL)
     return response.status === 200
   }

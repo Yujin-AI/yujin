@@ -16,7 +16,7 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "depcheck": "depcheck",
-    "job": "node ace resque:start --schedule=false --worker --is-multi --queue-name=embedding_articles --queue-name=url_processor --queue-name=article_processor --queue-name=shopify_processor",
+    "job": "node ace resque:start --schedule=false --worker --is-multi",
     "job:scheduler": "node ace resque:start --schedule --worker=false"
   },
   "imports": {

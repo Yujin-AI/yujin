@@ -15,18 +15,17 @@ export default class extends BaseSchema {
 
       table
         .enum('source_type', Object.values(ArticleSourceType), {
-          enumName: 'article_source_type_enum',
           useNative: true,
-          existingType: false,
+          enumName: 'article_source_type_enum',
         })
         .notNullable()
         .defaultTo(ArticleSourceType.SPIDER)
 
       table.string('error').nullable()
-      table.integer('content_length').nullable()
       table.boolean('is_processed').notNullable().defaultTo(true) //should bot be trained with this data
       table.string('slug').notNullable().unique()
       table.boolean('is_published').notNullable().defaultTo(true) // should this article be published and indexed
+      table.boolean('is_enhanced').notNullable().defaultTo(false) // has this article enhanced by AI
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
