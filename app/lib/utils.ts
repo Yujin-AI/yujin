@@ -1,6 +1,7 @@
 import app from '@adonisjs/core/services/app'
 import { encoding_for_model } from '@dqbd/tiktoken'
 import crypto from 'crypto'
+import turndownService from 'turndown'
 
 import {
   EncryptionAlgorithm,
@@ -45,6 +46,11 @@ export const reformMDUsingAI = async (content: string) => {
 export const jsonToMDUsingAI = async (json: Record<string, any>, url: string) => {
   const { title, ...info } = json
   info.body_html = info.body_html && removeSvgTags(info.body_html)
+
+  // [info] this will trim the token usage for the AI
+  info.body_markdown = new turndownService().turndown(info.body_html)
+  delete info.body_html
+  
   try {
     const ai = await app.container.make('ai')
     const aiResponse = await ai.askWithContext([
