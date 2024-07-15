@@ -18,6 +18,7 @@ export default class extends BaseSchema {
         .defaultTo(MessageSenderType.CUSTOMER)
       table.uuid('conversation_id').notNullable().references('conversations.id').onDelete('CASCADE')
       table.string('external_id').nullable()
+      table.boolean('seen').notNullable().defaultTo(false)
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

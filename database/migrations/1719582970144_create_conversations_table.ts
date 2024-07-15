@@ -19,7 +19,6 @@ export default class extends BaseSchema {
         .notNullable()
         .defaultTo(ConversationStatus.ACTIVE)
       table.string('session_id').notNullable()
-      table.boolean('seen').notNullable().defaultTo(false)
       table.enum('type', ['chat', 'ticket']).notNullable().defaultTo('chat')
       table.uuid('chatbot_id').notNullable().references('chatbots.id').onDelete('CASCADE')
       table.uuid('customer_id').notNullable().references('customers.id').onDelete('CASCADE')

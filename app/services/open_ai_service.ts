@@ -3,12 +3,12 @@ import { searchArticlesFunction } from '#lib/llm_functions/search_articles_funct
 
 export default class OpenAIService {
   private readonly openai: OpenAI
-  private readonly LLMModel = 'llama3-70b-8192'
+  private readonly LLMModel = 'gpt-3.5-turbo'
 
   constructor(private readonly apiKey: string) {
     this.openai = new OpenAI({
       apiKey: this.apiKey,
-      baseURL: 'https://api.groq.com/openai/v1',
+      // baseURL: 'https://api.groq.com/openai/v1',
     })
   }
 

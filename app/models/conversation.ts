@@ -11,6 +11,8 @@ import Message from '#models/message'
 export default class Conversation extends BaseModel {
   static selfAssignPrimaryKey = true
 
+  serializeExtras = true
+
   @column({ isPrimary: true })
   declare id: string
 
@@ -25,9 +27,6 @@ export default class Conversation extends BaseModel {
 
   @column()
   declare sessionId: string
-
-  @column()
-  declare seen: boolean
 
   @column()
   declare type: 'chat' | 'ticket'

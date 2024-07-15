@@ -110,4 +110,32 @@ export default class Chatbot extends BaseModel {
     if (!article) return false
     return article.chatbotId === this.id
   }
+
+  async getConversations() {
+    const conversations = await Conversation.query()
+      .where('chatbotId', this.id)
+      .select('id', 'title', 'source', 'status', 'customer_id', 'created_at')
+      .preload('messages', (q) => {
+        q.where('sender_type', 'customer')
+          .orderBy('created_at', 'desc')
+          .select('id', 'conversation_id', 'content', 'created_at', 'seen')
+          .as('lastMessage')
+          .first()
+      })
+      .withCount('messages', (q) => {
+        q.where('sender_type', 'customer').andWhere('seen', false).as('unseenMessages')
+      })
+      .orderBy('created_at', 'desc')
+      .preload('customer', (q) => {
+        q.select('id', 'name')
+      })
+
+    return conversations.map((conversation) => {
+      const { messages, ...rest } = conversation.serialize()
+      return {
+        ...rest,
+        lastMessage: messages[0] || null,
+      }
+    })
+  }
 }

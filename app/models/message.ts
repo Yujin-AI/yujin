@@ -25,6 +25,13 @@ export default class Message extends BaseModel {
   @column()
   declare conversationId: string
 
+  /**
+   * Indicates if a customer has seen bot replies or
+   * if a human agent has seen customer messages.
+   */
+  @column()
+  declare seen: boolean
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
