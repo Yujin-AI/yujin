@@ -17,7 +17,7 @@ export default class AIProvider {
       switch (aiProvider) {
         case 'openai':
           const OpenAIService = (await import('#services/open_ai_service')).default
-          return new OpenAIService(env.get('GROQ_API_KEY'))
+          return new OpenAIService(env.get('AI_API_KEY'))
         // case 'ollama':
         //   const OllamaAIService = (await import('#services/ollama_ai_service')).default
         //   return new OllamaAIService()

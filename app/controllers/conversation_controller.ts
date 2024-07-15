@@ -8,22 +8,7 @@ import { createConversationValidation } from '#validators/conversation_validator
 export default class ConversationModelsController {
   @bindChatbot()
   public async index({}: HttpContext, chatbot: Chatbot) {
-    const conversations = await chatbot
-      .related('conversations')
-      .query()
-      // todo)) add message level seen status
-      .select('id', 'title', 'source', 'status', 'seen', 'customer_id', 'created_at')
-      .preload('messages', (q) => {
-        q.where('sender_type', 'customer')
-          .orderBy('created_at', 'desc')
-          .select('id', 'conversation_id', 'content', 'created_at')
-          .as('lastMessage')
-          .limit(1)
-      })
-      .orderBy('created_at', 'desc')
-      .preload('customer', (q) => {
-        q.select('id', 'name')
-      })
+    const conversations = await chatbot.getConversations()
 
     return { success: true, data: conversations }
   }
